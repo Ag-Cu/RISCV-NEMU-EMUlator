@@ -16,6 +16,7 @@
 #include <isa.h>
 #include <cpu/cpu.h>
 #include <readline/readline.h>
+#include <memory/paddr.h>
 #include <readline/history.h>
 #include "sdb.h"
 
@@ -70,13 +71,34 @@ static int cmd_info(char *args) {
   if (!strcmp(args, "r")) {         
     isa_reg_display();
   } else if (!strcmp(args, "w")) {
-    // Printing Watchpoint Information
+    // todo:  Printing Watchpoint Information
+  }
+  return 0;
+}
+
+static int cmd_x(char *args) {
+  char *len = strtok(NULL, " ");
+  if (len == NULL) {
+    printf("No arguements given!\n");
+    return -1;
+  }
+  char *addr_str = strtok(NULL, " ");
+  if (addr_str == NULL) {
+    printf("No address arguement given!\n");
+    return -1;
+  }
+  int mem_len = atoi(len);
+  paddr_t addr = atol(addr_str);
+  int temp;
+  for (int i = 0; i < mem_len; i++) {
+    temp = paddr_read(addr, 4);
+    printf("\t0x%x  :  %d\n", addr, temp);
   }
   return 0;
 }
 
   /* 
-  -------------------add some commands here-------------------
+  -------------------add some commands up there-------------------
   */
 static int cmd_help(char *args);
 
@@ -91,7 +113,8 @@ static struct {
 
   /* TODO: Add more commands */
   { "si", "Single step through N instructions and suspend execution, N defaults to 0", cmd_si },
-  { "info", "print register or watchpoint information", cmd_info },
+  { "info", "Print register or watchpoint information", cmd_info },
+  { "x", "Scan length of memory", cmd_x },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
