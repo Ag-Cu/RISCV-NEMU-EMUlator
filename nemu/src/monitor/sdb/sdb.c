@@ -88,7 +88,7 @@ static int cmd_x(char *args) {
   int temp;
   for (int i = 0; i < mem_len; i++) {
     temp = paddr_read(addr, 4);
-    printf("\t0x%x  :  %08x\n", addr, temp);
+    printf("\t0x%x  :  0x%08x\n", addr, temp);
     addr += 4;
   }
   return 0;
