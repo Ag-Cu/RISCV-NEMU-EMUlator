@@ -82,9 +82,9 @@ static int cmd_x(char *args) {
     printf("No arguements given!\n");
     return -1;
   }
-  char *addr_str = args + strlen(len) + 3;
+  char *addr_str = args + strlen(len) + 1;
   int mem_len = atoi(len);
-  paddr_t addr = atol(addr_str);
+  paddr_t addr = strtol(addr_str, &addr_str, 16);
   int temp;
   for (int i = 0; i < mem_len; i++) {
     temp = paddr_read(addr, 4);
