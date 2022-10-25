@@ -63,6 +63,18 @@ static int cmd_si(char *args) {
   return 0;
 }
 
+static int cmd_info(char *args) {
+  if (args == NULL) {
+    return -1;
+  }
+  if (!strcmp(args, "r")) {         
+    isa_reg_display();
+  } else if (!strcmp(args, "w")) {
+    // Printing Watchpoint Information
+  }
+  return 0;
+}
+
   /* 
   -------------------add some commands here-------------------
   */
@@ -79,6 +91,7 @@ static struct {
 
   /* TODO: Add more commands */
   { "si", "Single step through N instructions and suspend execution, N defaults to 0", cmd_si },
+  { "info", "print register or watchpoint information", cmd_info },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
