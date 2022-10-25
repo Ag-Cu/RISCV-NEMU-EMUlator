@@ -82,11 +82,7 @@ static int cmd_x(char *args) {
     printf("No arguements given!\n");
     return -1;
   }
-  char *addr_str = strtok(NULL, " 0x");
-  if (addr_str == NULL) {
-    printf("No address arguement given!\n");
-    return -1;
-  }
+  char *addr_str = args + strlen(len) + 1;
   int mem_len = atoi(len);
   paddr_t addr = atol(addr_str);
   int temp;
