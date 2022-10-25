@@ -52,7 +52,20 @@ static int cmd_q(char *args) {
   nemu_state.state = NEMU_QUIT;
   return -1;
 }
+  /* 
+  -------------------add some commands here-------------------
+  */
+static int cmd_si(char *args) {
+  if (args == NULL) {
+    return -1;
+  }
+  cpu_exec(atoi(args));
+  return 0;
+}
 
+  /* 
+  -------------------add some commands here-------------------
+  */
 static int cmd_help(char *args);
 
 static struct {
@@ -65,7 +78,7 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-
+  { "si", "Single step through N instructions and suspend execution, N defaults to 0", cmd_si },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
