@@ -16,6 +16,7 @@
 #include <isa.h>
 #include <cpu/cpu.h>
 #include <readline/readline.h>
+#include <memory/paddr.h>
 #include <readline/history.h>
 #include "sdb.h"
 
@@ -49,9 +50,53 @@ static int cmd_c(char *args) {
 
 
 static int cmd_q(char *args) {
+  nemu_state.state = NEMU_QUIT;
   return -1;
 }
+  /* 
+  -------------------add some commands here-------------------
+  */
+static int cmd_si(char *args) {
+  if (args == NULL) {
+    return -1;
+  }
+  cpu_exec(atoi(args));
+  return 0;
+}
 
+static int cmd_info(char *args) {
+  if (args == NULL) {
+    return -1;
+  }
+  if (!strcmp(args, "r")) {         
+    isa_reg_display();
+  } else if (!strcmp(args, "w")) {
+    // todo:  Printing Watchpoint Information
+  }
+  return 0;
+}
+
+static int cmd_x(char *args) {
+  char *len = strtok(NULL, " ");
+  if (len == NULL) {
+    printf("No arguements given!\n");
+    return -1;
+  }
+  char *addr_str = args + strlen(len) + 1;
+  int mem_len = atoi(len);
+  paddr_t addr = strtol(addr_str, &addr_str, 16);
+  int temp;
+  for (int i = 0; i < mem_len; i++) {
+    temp = paddr_read(addr, 4);
+    printf("\t0x%x  :  0x%08x\n", addr, temp);
+    addr += 4;
+  }
+  return 0;
+}
+
+  /* 
+  -------------------add some commands up there-------------------
+  */
 static int cmd_help(char *args);
 
 static struct {
@@ -64,7 +109,9 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
 
   /* TODO: Add more commands */
-
+  { "si", "Single step through N instructions and suspend execution, N defaults to 0", cmd_si },
+  { "info", "Print register or watchpoint information", cmd_info },
+  { "x", "Scan length of memory", cmd_x },
 };
 
 #define NR_CMD ARRLEN(cmd_table)

@@ -39,6 +39,11 @@ static struct rule {
   {" +", TK_NOTYPE},    // spaces
   {"\\+", '+'},         // plus
   {"==", TK_EQ},        // equal
+  {"-", '-'},           // sub
+  {"\\*", '*'},         // multiply
+  {"/", '/'},           // divide
+  {"(", '('},           // left bracket
+  {")", ')'},           // right bracket
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -95,6 +100,38 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
+          case TK_NOTYPE : 
+            break;
+          case '+' :
+            Token new_token;
+            new_token.type = '+';
+            tokens[nr_token++] = new_token;
+            break;
+          case '-' :
+            Token new_token;
+            new_token.type = '-';
+            tokens[nr_token++] = new_token;
+            break;
+          case '*' :
+            Token new_token;
+            new_token.type = '*';
+            tokens[nr_token++] = new_token;
+            break;
+          case '/' :
+            Token new_token;
+            new_token.type = '/';
+            tokens[nr_token++] = new_token;
+            break;
+          case '(' :
+            Token new_token;
+            new_token.type = '(';
+            tokens[nr_token++] = new_token;
+            break;
+          case ')' :
+            Token new_token;
+            new_token.type = ')';
+            tokens[nr_token++] = new_token;
+            break;
           default: TODO();
         }
 
