@@ -213,6 +213,7 @@ char get_element(SqStack *S) {
 int check_parentheses(int p, int q) {
   SqStack st;
   InitStack(&st);
+  bool flag = true;                   // stack never empty until the last token
   for (int i = p; i <= q; i++) {
     if (tokens[i].type == TK_LB) {
       push(&st, '(');
@@ -221,13 +222,16 @@ int check_parentheses(int p, int q) {
         return 0;
       } else {
         pop(&st);
+        if (i != q && st.top == -1) {
+          flag = false;
+        }
       }
     }
   }
   if (st.top != -1) {
     return 0;
   }
-  if (tokens[p].type == TK_LB && tokens[q].type == TK_RB) {
+  if (tokens[p].type == TK_LB && tokens[q].type == TK_RB && flag) {
     return 1;
   }
   return 2;
