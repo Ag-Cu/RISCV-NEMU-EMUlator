@@ -37,7 +37,7 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {"^-?[1-9]\\d*|0$", TK_NUM},        // decimal nums (neg & pos & zero)
+  {"[0-9]+", TK_NUM},        // decimal nums (neg & pos & zero)
   {" +", TK_NOTYPE},        // spaces
   {"\\+", TK_PLUS},         // plus
   {"==", TK_EQ},            // equal
