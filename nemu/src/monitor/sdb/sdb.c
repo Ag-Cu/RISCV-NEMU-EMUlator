@@ -101,6 +101,7 @@ static int cmd_p(char *args) {
     printf("Bad expression!");
     return -1;
   }
+  printf("%ld", expr_val);
   return expr_val;
 }
 
