@@ -94,6 +94,16 @@ static int cmd_x(char *args) {
   return 0;
 }
 
+static int cmd_p(char *args) {
+  bool success = true;
+  word_t expr_val = expr(args, &success);
+  if (!success) {
+    printf("Bad expression!");
+    return -1;
+  }
+  return expr_val;
+}
+
   /* 
   -------------------add some commands up there-------------------
   */
@@ -112,6 +122,7 @@ static struct {
   { "si", "Single step through N instructions and suspend execution, N defaults to 0", cmd_si },
   { "info", "Print register or watchpoint information", cmd_info },
   { "x", "Scan length of memory", cmd_x },
+  { "p", "Evaluate the expression EXPR", cmd_p },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
