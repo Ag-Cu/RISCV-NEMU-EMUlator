@@ -98,10 +98,10 @@ static int cmd_p(char *args) {
   bool success = true;
   word_t expr_val = expr(args, &success);
   if (!success) {
-    printf("Bad expression!");
+    printf("Bad expression!\n");
     return -1;
   }
-  printf("%ld", expr_val);
+  printf("%ld\n", expr_val);
   return expr_val;
 }
 

@@ -137,7 +137,8 @@ static bool make_token(char *e) {
             tokens[nr_token++] = new_token;
             break;
           default: 
-            panic("Unknow token type!\n");
+            printf("Unknow token type!\n");
+            return false;
         }
 
         break;
@@ -149,7 +150,6 @@ static bool make_token(char *e) {
       return false;
     }
   }
-
   return true;
 }
 
