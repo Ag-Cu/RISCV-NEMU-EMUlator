@@ -65,11 +65,11 @@ int main(int argc, char *argv[]) {
   for (i = 0; i < loop; i ++) {
     gen_rand_expr();
 
-    sprintf(code_buf, code_format, buf);
+    sprintf(code_buf, code_format, buf);        // buf -> code_buf
 
     FILE *fp = fopen("/tmp/.code.c", "w");
     assert(fp != NULL);
-    fputs(code_buf, fp);
+    fputs(code_buf, fp);                        // code_buf -> /tmp/.code.c
     fclose(fp);
 
     int ret = system("gcc /tmp/.code.c -o /tmp/.expr");
