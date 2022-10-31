@@ -21,9 +21,10 @@
 #include <regex.h>
 
 enum {
-  TK_NOTYPE = 256, TK_EQ, TK_NUM,
-  TK_PLUS, TK_SUB, TK_MTP, TK_DID, TK_LB, TK_RB,
-
+  TK_NOTYPE = 256, TK_NUM, TK_HEX, TK_REG, 
+  TK_PLUS, TK_SUB, TK_MTP, TK_DID, TK_LB, TK_RB, 
+  TK_EQ, TK_NEQ, TK_AND,
+  TK_NEG, TK_PTR,
   /* TODO: Add more token types */
 
 };
@@ -37,15 +38,19 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {"^[1-9][0-9]*|0", TK_NUM},        // decimal nums (neg & pos & zero)
-  {" +", TK_NOTYPE},        // spaces
-  {"\\+", TK_PLUS},         // plus
-  {"==", TK_EQ},            // equal
-  {"-", TK_SUB},            // sub
-  {"\\*", TK_MTP},          // multiply
-  {"/", TK_DID},            // divide
-  {"\\(", TK_LB},             // left bracket
-  {"\\)", TK_RB},             // right bracket
+  {"^[1-9][0-9]*|0", TK_NUM},         // decimal nums (neg & pos & zero)
+  {"0[xX][0-9]+", TK_HEX},            // hexadecimal-number
+  {"\\$[a-z]+", TK_REG},              // reg_name
+  {" +", TK_NOTYPE},                  // spaces
+  {"\\+", TK_PLUS},                   // plus
+  {"==", TK_EQ},                      // equal
+  {"-", TK_SUB},                      // sub
+  {"\\*", TK_MTP},                    // multiply
+  {"/", TK_DID},                      // divide
+  {"\\(", TK_LB},                     // left bracket
+  {"\\)", TK_RB},                     // right bracket
+  {"!=", TK_NEQ},                     // '!='
+  {"&&", TK_AND},                     // '&&'
 };
 
 #define NR_REGEX ARRLEN(rules)
@@ -106,27 +111,36 @@ static bool make_token(char *e) {
             break;
           case TK_PLUS :
             new_token.type = TK_PLUS;
-            tokens[nr_token++] = new_token;
             break;
           case TK_SUB :
             new_token.type = TK_SUB;
-            tokens[nr_token++] = new_token;
+            break;
+          case TK_NEG :
+            new_token.type = TK_NEG;
             break;
           case TK_MTP :
             new_token.type = TK_MTP;
-            tokens[nr_token++] = new_token;
+            break;
+          case TK_PTR :
+            new_token.type = TK_PTR;
             break;
           case TK_DID :
             new_token.type = TK_DID;
-            tokens[nr_token++] = new_token;
             break;
           case TK_LB :
             new_token.type = TK_LB;
-            tokens[nr_token++] = new_token;
             break;
           case TK_RB :
             new_token.type = TK_RB;
-            tokens[nr_token++] = new_token;
+            break;
+          case TK_EQ :
+            new_token.type = TK_EQ;
+            break;
+          case TK_NEQ :
+            new_token.type = TK_NEQ;
+            break;
+          case TK_AND :
+            new_token.type = TK_AND;
             break;
           case TK_NUM :
             new_token.type = TK_NUM;
@@ -134,14 +148,44 @@ static bool make_token(char *e) {
               new_token.str[i] = substr_start[i];
             }
             new_token.str[substr_len] = '\0';
-            tokens[nr_token++] = new_token;
+            break;
+          case TK_HEX :
+            new_token.type = TK_HEX;
+            for (int i = 0; i < substr_len; i++) {
+              new_token.str[i] = substr_start[i];
+            }
+            new_token.str[substr_len] = '\0';
             break;
           default: 
             printf("Unknow token type!\n");
             return false;
         }
-
+        tokens[nr_token++] = new_token;
         break;
+      }
+    }
+    for (int i = 0; i < nr_token; i++) {
+      if (tokens[i].type == TK_SUB) {
+        if (i == 0) {
+          tokens[i].type = TK_NEG;
+          continue;
+        }
+        if (tokens[i - 1].type != TK_NUM && tokens[i - 1].type != TK_HEX
+            && tokens[i - 1].type != TK_LB && tokens[i - 1].type != TK_REG) {
+              tokens[i].type = TK_NEG;
+            }
+        continue;
+      }
+      if (tokens[i].type == TK_MTP) {
+        if (i == 0) {
+          tokens[i].type = TK_PTR;
+          continue;
+        }
+        if (tokens[i - 1].type != TK_NUM && tokens[i - 1].type != TK_HEX
+            && tokens[i - 1].type != TK_LB && tokens[i - 1].type != TK_REG) {
+              tokens[i].type = TK_PTR;
+            }
+        continue;
       }
     }
 
@@ -239,8 +283,17 @@ int check_parentheses(int p, int q) {
 
 int find_master(int p, int q) {
   int res = -1;
-  int level = 2;
-  int flag = 0;
+
+  /* 
+  level:    
+  '&&'       ----   0
+  '==' '!='  ----   1
+  '+'  '-'   ----   2
+  '*'  '/'   ----   3
+  '-'  '*'   ----   4 
+  */
+  int level = 2;                  
+  int flag = 0;                   // for judging whether in '( ... )' or not
   for (int i = p; i <= q; i++) {
      if (flag >= 1) {
       if (tokens[i].type == TK_RB) {
@@ -252,16 +305,34 @@ int find_master(int p, int q) {
       flag++;
       continue;
      }
-     if (tokens[i].type == TK_PLUS || tokens[i].type == TK_SUB) {
+     if (tokens[i].type == TK_AND) {
       if (level >= 0) {
         res = i;
         level = 0;
         continue;
       }
-     } else if (tokens[i].type == TK_MTP || tokens[i].type == TK_DID) {
+     } else if (tokens[i].type == TK_EQ || tokens[i].type == TK_NEQ) {
       if (level >= 1) {
         res = i;
         level = 1;
+        continue;
+      }
+     }else if (tokens[i].type == TK_PLUS || tokens[i].type == TK_SUB) {
+      if (level >= 2) {
+        res = i;
+        level = 2;
+        continue;
+      }
+     }else if (tokens[i].type == TK_MTP || tokens[i].type == TK_DID) {
+      if (level >= 3) {
+        res = i;
+        level = 3;
+        continue;
+      }
+     }else if (tokens[i].type == TK_PTR || tokens[i].type == TK_NEG) {
+      if (level >= 4) {
+        res = i;
+        level = 4;
         continue;
       }
      }
@@ -277,6 +348,9 @@ word_t eval(int p, int q, bool *valid) {
   } else if (p == q) {                        // single token
     if (tokens[p].type == TK_NUM) {
         return atoi((char *)tokens[p].str);
+    } else if (tokens[p].type == TK_HEX) {
+        char **ptr = NULL;
+        return (word_t)strtol((char *)tokens[p].str, ptr, 16);
     } else {                                  // if singal token not a num
       *valid = false;
       return 0;
@@ -289,6 +363,24 @@ word_t eval(int p, int q, bool *valid) {
   } else {
     int op = find_master(p, q);
     assert(op > 0);
+    if (op == p) {
+      if (tokens[op].type == TK_NEG) {
+        word_t res = -1 * eval(p+1, q, &left_valid);
+        if (left_valid) {
+          return res;
+        }
+        *valid = false;
+        return 0;
+      }
+      if (tokens[op].type == TK_PTR) {
+        word_t res =  *((uint32_t*)eval(p+1, q, &left_valid));
+        if (left_valid) {
+          return res;
+        }
+        *valid = false;
+        return 0;
+      }
+    }
     word_t val1 = eval(p, op-1, &left_valid);
     word_t val2 = eval(op+1, q, &right_valid);
     if (!left_valid && !right_valid) {
@@ -305,6 +397,11 @@ word_t eval(int p, int q, bool *valid) {
       case TK_SUB: return val1 - val2;
       case TK_MTP: return val1 * val2;
       case TK_DID: return val1 / val2;
+      case TK_EQ: return val1 == val2;
+      case TK_NEQ: return val1 != val2;
+      case TK_AND: return val1 && val2;
+      case TK_NEG: panic("Check your '-'");
+      case TK_PTR: panic("check your '*'");
       default:
         assert(0);
       }
