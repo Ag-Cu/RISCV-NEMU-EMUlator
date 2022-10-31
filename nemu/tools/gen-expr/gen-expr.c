@@ -55,9 +55,14 @@ void gen(char c) {
 void gen_num() {
   gen_space();
   int num = choose(1000);
-  char str[10];
+  int num_len = 1;
+  while (num / 10 != 0) {
+    num /= 10;
+    num_len++;
+  }
+  char str[10] = {"\0"};
   sprintf(str, "%d", num);
-  for (int i = 0; i < sizeof(str) - 1; i++) {
+  for (int i = 0; i < num_len; i++) {
     buf[buf_index++] = str[i];
   }
   gen_space();
