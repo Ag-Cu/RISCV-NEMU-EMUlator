@@ -213,7 +213,7 @@ word_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
-  return expr_value;
+  return (uint64_t)expr_value;
 }
 
 
