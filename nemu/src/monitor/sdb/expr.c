@@ -98,7 +98,7 @@ static bool make_token(char *e) {
 
         Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
             i, rules[i].regex, position, substr_len, substr_len, substr_start);
-
+        Log("test------------------");
         position += substr_len;
 
         /* TODO: Now a new token is recognized with rules[i]. Add codes
@@ -366,16 +366,16 @@ uint64_t eval(int p, int q, bool *valid) {
     assert(op <= q);
     if (op == p) {
       if (tokens[op].type == TK_NEG) {
-        word_t res = -1 * eval(p+1, q, &left_valid);
-        if (left_valid) {
+        word_t res = -1 * eval(p+1, q, &right_valid);
+        if (right_valid) {
           return res;
         }
         *valid = false;
         return 0;
       }
       if (tokens[op].type == TK_PTR) {
-        word_t res =  *((uint32_t*)eval(p+1, q, &left_valid));
-        if (left_valid) {
+        word_t res =  *((uint32_t*)eval(p+1, q, &right_valid));
+        if (right_valid) {
           return res;
         }
         *valid = false;
