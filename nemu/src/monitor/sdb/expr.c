@@ -382,8 +382,8 @@ uint64_t eval(int p, int q, bool *valid) {
         return 0;
       }
     }
-    uint32_t val1 = eval(p, op-1, &left_valid);
-    uint32_t val2 = eval(op+1, q, &right_valid);
+    uint64_t val1 = eval(p, op-1, &left_valid);
+    uint64_t val2 = eval(op+1, q, &right_valid);
     if (!left_valid && !right_valid) {
       *valid = false;
       return 0;
