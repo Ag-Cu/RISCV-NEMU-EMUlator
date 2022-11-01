@@ -292,7 +292,7 @@ int find_master(int p, int q) {
   '*'  '/'   ----   3
   '-'  '*'   ----   4 
   */
-  int level = 2;                  
+  int level = 4;                  
   int flag = 0;                   // for judging whether in '( ... )' or not
   for (int i = p; i <= q; i++) {
      if (flag >= 1) {
