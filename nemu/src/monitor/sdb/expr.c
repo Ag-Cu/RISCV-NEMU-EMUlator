@@ -362,7 +362,7 @@ word_t eval(int p, int q, bool *valid) {
     return 0;
   } else {
     int op = find_master(p, q);
-    assert(op > 0);
+    assert(op >= p);
     if (op == p) {
       if (tokens[op].type == TK_NEG) {
         word_t res = -1 * eval(p+1, q, &left_valid);
