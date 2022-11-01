@@ -98,7 +98,6 @@ static bool make_token(char *e) {
 
         Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
             i, rules[i].regex, position, substr_len, substr_len, substr_start);
-        Log("test------------------");
         position += substr_len;
 
         /* TODO: Now a new token is recognized with rules[i]. Add codes
