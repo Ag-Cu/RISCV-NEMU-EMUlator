@@ -197,7 +197,7 @@ static bool make_token(char *e) {
   return true;
 }
 
-word_t eval(int p, int q, bool *valid);
+uint64_t eval(int p, int q, bool *valid);
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -213,7 +213,7 @@ word_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
-  return (uint64_t)expr_value;
+  return expr_value;
 }
 
 
@@ -340,7 +340,7 @@ int find_master(int p, int q) {
   return res;
 }
 
-word_t eval(int p, int q, bool *valid) {
+uint64_t eval(int p, int q, bool *valid) {
   bool left_valid = true, right_valid = true;
   if (p > q) {
     *valid = false;
@@ -363,6 +363,7 @@ word_t eval(int p, int q, bool *valid) {
   } else {
     int op = find_master(p, q);
     assert(op >= p);
+    assert(op <= q);
     if (op == p) {
       if (tokens[op].type == TK_NEG) {
         word_t res = -1 * eval(p+1, q, &left_valid);
@@ -381,15 +382,15 @@ word_t eval(int p, int q, bool *valid) {
         return 0;
       }
     }
-    word_t val1 = eval(p, op-1, &left_valid);
-    word_t val2 = eval(op+1, q, &right_valid);
+    uint32_t val1 = eval(p, op-1, &left_valid);
+    uint32_t val2 = eval(op+1, q, &right_valid);
     if (!left_valid && !right_valid) {
       *valid = false;
       return 0;
     } else if (left_valid && !right_valid) {
       return val1;
     } else if (!left_valid && right_valid) {
-      return val2;;
+      return val2;
     } else {
       switch (tokens[op].type)
       {
