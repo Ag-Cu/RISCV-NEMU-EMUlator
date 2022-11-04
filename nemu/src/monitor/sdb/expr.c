@@ -37,7 +37,7 @@ static struct rule {
   /* TODO: Add more rules.
    * Pay attention to the precedence level of different rules.
    */
-  
+
   {"0[xX][0-9]+", TK_HEX},            // hexadecimal-number
   {"^[1-9][0-9]*|0", TK_NUM},         // decimal nums (neg & pos & zero)
   {"\\$[a-z]+", TK_REG},              // reg_name
@@ -163,7 +163,12 @@ static bool make_token(char *e) {
         break;
       }
     }
-    for (int i = 0; i < nr_token; i++) {
+    if (i == NR_REGEX) {
+      printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
+      return false;
+    }
+  }
+  for (int i = 0; i < nr_token; i++) {
       if (tokens[i].type == TK_SUB) {
         if (i == 0) {
           tokens[i].type = TK_NEG;
@@ -187,12 +192,6 @@ static bool make_token(char *e) {
         continue;
       }
     }
-
-    if (i == NR_REGEX) {
-      printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
-      return false;
-    }
-  }
   return true;
 }
 
@@ -340,6 +339,8 @@ int find_master(int p, int q) {
 }
 
 uint64_t eval(int p, int q, bool *valid) {
+  while (tokens[p].type == TK_NOTYPE) p++;
+  while (tokens[q].type == TK_NOTYPE) q--;
   bool left_valid = true, right_valid = true;
   if (p > q) {
     *valid = false;
