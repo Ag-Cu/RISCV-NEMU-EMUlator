@@ -162,6 +162,7 @@ static bool make_token(char *e) {
               new_token.str[i] = substr_start[i];
             }
             new_token.str[substr_len] = '\0';
+            break;
           default: 
             printf("Unknow token type!\n");
             return false;
