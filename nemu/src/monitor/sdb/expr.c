@@ -29,6 +29,7 @@ enum {
 
 };
 
+
 static struct rule {
   const char *regex;
   int token_type;
@@ -155,6 +156,12 @@ static bool make_token(char *e) {
             }
             new_token.str[substr_len] = '\0';
             break;
+          case TK_REG :
+            new_token.type = TK_REG;
+            for (int i = 1; i < substr_len; i++) {
+              new_token.str[i] = substr_start[i];
+            }
+            new_token.str[substr_len] = '\0';
           default: 
             printf("Unknow token type!\n");
             return false;
@@ -349,6 +356,13 @@ uint64_t eval(int p, int q, bool *valid) {
     } else if (tokens[p].type == TK_HEX) {
         char **ptr = NULL;
         return (word_t)strtol((char *)tokens[p].str, ptr, 16);
+    } else if (tokens->type == TK_REG) {
+        word_t reg_val = isa_reg_str2val(tokens[p].str, &right_valid);
+        if (!right_valid) {
+          *valid = false;
+          return 0;
+        }
+        return reg_val;
     } else {                                  // if singal token not a num
       *valid = false;
       return 0;
