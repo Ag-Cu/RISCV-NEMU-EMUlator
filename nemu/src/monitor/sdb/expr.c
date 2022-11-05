@@ -107,6 +107,7 @@ static bool make_token(char *e) {
         Token new_token;
         switch (rules[i].token_type) {
           case TK_NOTYPE : 
+            new_token.type = TK_NOTYPE;
             break;
           case TK_PLUS :
             new_token.type = TK_PLUS;
