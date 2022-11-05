@@ -95,10 +95,9 @@ static bool make_token(char *e) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
-        printf("??????????????????????????????????");
+
         Log("match rules[%d] = \"%s\" at position %d with len %d: %.*s",
             i, rules[i].regex, position, substr_len, substr_len, substr_start);
-        printf("??????????????????????????????????");
         position += substr_len;
 
         /* TODO: Now a new token is recognized with rules[i]. Add codes
@@ -340,8 +339,8 @@ int find_master(int p, int q) {
 }
 
 uint64_t eval(int p, int q, bool *valid) {
-  while (tokens[p].type == TK_NOTYPE) p++;
-  while (tokens[q].type == TK_NOTYPE) q--;
+  while (p < q && tokens[p].type == TK_NOTYPE) p++;
+  while (p < q && tokens[q].type == TK_NOTYPE) q++;
   bool left_valid = true, right_valid = true;
   if (p > q) {
     *valid = false;
