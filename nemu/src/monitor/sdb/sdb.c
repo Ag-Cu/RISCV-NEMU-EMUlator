@@ -25,6 +25,7 @@ static int is_batch_mode = false;
 void init_regex();
 void init_wp_pool();
 
+
 /* We use the `readline' library to provide more flexibility to read from stdin. */
 static char* rl_gets() {
   static char *line_read = NULL;
@@ -105,6 +106,10 @@ static int cmd_p(char *args) {
   return expr_val;
 }
 
+static int cmd_w(char *args) {
+  
+}
+
   /* 
   -------------------add some commands up there-------------------
   */
@@ -124,6 +129,7 @@ static struct {
   { "info", "Print register or watchpoint information", cmd_info },
   { "x", "Scan length of memory", cmd_x },
   { "p", "Evaluate the expression EXPR", cmd_p },
+  { "w", "Set watch point", cmd_w },
 };
 
 #define NR_CMD ARRLEN(cmd_table)
