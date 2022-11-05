@@ -175,7 +175,7 @@ static bool make_token(char *e) {
           continue;
         }
         if (tokens[i - 1].type != TK_NUM && tokens[i - 1].type != TK_HEX
-            && tokens[i - 1].type != TK_LB && tokens[i - 1].type != TK_REG) {
+            && tokens[i - 1].type != TK_RB && tokens[i - 1].type != TK_REG) {
               tokens[i].type = TK_NEG;
             }
         continue;
@@ -186,7 +186,7 @@ static bool make_token(char *e) {
           continue;
         }
         if (tokens[i - 1].type != TK_NUM && tokens[i - 1].type != TK_HEX
-            && tokens[i - 1].type != TK_LB && tokens[i - 1].type != TK_REG) {
+            && tokens[i - 1].type != TK_RB && tokens[i - 1].type != TK_REG) {
               tokens[i].type = TK_PTR;
             }
         continue;
@@ -339,8 +339,6 @@ int find_master(int p, int q) {
 }
 
 uint64_t eval(int p, int q, bool *valid) {
-  while (p < q && tokens[p].type == TK_NOTYPE) p++;
-  while (p < q && tokens[q].type == TK_NOTYPE) q++;
   bool left_valid = true, right_valid = true;
   if (p > q) {
     *valid = false;
