@@ -107,7 +107,6 @@ static bool make_token(char *e) {
         Token new_token;
         switch (rules[i].token_type) {
           case TK_NOTYPE : 
-            new_token.type = TK_NOTYPE;
             break;
           case TK_PLUS :
             new_token.type = TK_PLUS;
@@ -160,7 +159,7 @@ static bool make_token(char *e) {
             printf("Unknow token type!\n");
             return false;
         }
-        tokens[nr_token++] = new_token;
+        if (rules[i].token_type != TK_NOTYPE) tokens[nr_token++] = new_token;
         break;
       }
     }
