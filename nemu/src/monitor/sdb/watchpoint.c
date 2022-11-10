@@ -95,7 +95,7 @@ void watchpoint_display() {
   } else {
     WP *cur = wp_head->next;
     while (cur) {
-      printf("NO.%d watchpoint\n", cur->NO);
+      printf("NO %d watchpoint\n", cur->NO);
       cur = cur->next;
     }
   }
