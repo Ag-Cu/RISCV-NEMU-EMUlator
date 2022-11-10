@@ -59,8 +59,13 @@ WP* new_wp() {
       free_ = free_->next;
     }
     new->next = NULL;
-    wp_tail->next = new;
-    wp_tail = new;
+    if (wp_head == NULL) {
+      wp_head = new;
+      wp_tail = new;
+    } else {
+      wp_tail->next = new;
+      wp_tail = new;
+    }
     return new;
   } else {
     panic("No more free watch point nodes in wp_pool!\n");
@@ -89,7 +94,7 @@ bool check_wp() {
 }
 
 void watchpoint_display() {
-  if (wp_head->next == NULL) {
+  if (wp_head == NULL) {
     printf("No watchpoint.\n");
   } else {
     WP *cur = wp_head->next;
