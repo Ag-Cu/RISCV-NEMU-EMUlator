@@ -95,7 +95,7 @@ void watchpoint_display() {
   if (wp_head == NULL) {
     printf("No watchpoint.\n");
   } else {
-    WP *cur = wp_head->next;
+    WP *cur = wp_head;
     while (cur) {
       printf("NO.%d watchpoint\n", cur->NO);
       cur = cur->next;
