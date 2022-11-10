@@ -75,7 +75,8 @@ static int cmd_info(char *args) {
   if (!strcmp(args, "r")) {         
     isa_reg_display();
   } else if (!strcmp(args, "w")) {
-    // todo:  Printing Watchpoint Information
+    // Printing Watchpoint Information
+    watchpoint_display();
   }
   return 0;
 }
@@ -121,6 +122,10 @@ static int cmd_w(char *args) {
   return 0;
 }
 
+static int cmd_d(char *args) {
+  free_wp(atoi(args));
+  return 0;
+}
   /* 
   -------------------add some commands up there-------------------
   */
@@ -140,7 +145,8 @@ static struct {
   { "info", "Print register or watchpoint information", cmd_info },
   { "x", "Scan length of memory", cmd_x },
   { "p", "Evaluate the expression EXPR", cmd_p },
-  { "w", "Set watch point", cmd_w },
+  { "w", "Set watchpoint", cmd_w },
+  { "d", "Delete watchpoint", cmd_d },
 };
 
 #define NR_CMD ARRLEN(cmd_table)

@@ -27,7 +27,6 @@ void init_wp_pool() {
   for (i = 0; i < NR_WP; i ++) {
     wp_pool[i].NO = i;
     wp_pool[i].next = (i == NR_WP - 1 ? NULL : &wp_pool[i + 1]);
-    wp_pool[i].status = false;
   }
   WP dummyhead;
   wp_head = &dummyhead;
@@ -38,17 +37,17 @@ void init_wp_pool() {
 
 /* TODO: Implement the functionality of watchpoint */
 
-void free_wp(WP *wp){
+void free_wp(int no){
   WP* pre = wp_head;
-  while (pre->next && pre->next->NO != wp->NO) {
+  while (pre->next && pre->next->NO != no) {
     pre = pre->next;
   }
-  if (pre->next) {              // search wp successfully
+  if (pre->next) {
+    WP *wp = pre->next;              // search wp successfully
     pre->next = wp->next;
     free_tail->next = wp;
     free_tail = wp;
     wp->next = NULL;
-    wp->status = false;
   } else {
     panic("Fail to free!\n");
   }
@@ -60,7 +59,6 @@ WP* new_wp() {
     if (free_->next) {
       free_ = free_->next;
     }
-    new->status = true;
     new->next = NULL;
     wp_tail->next = new;
     wp_tail = new;
@@ -83,10 +81,23 @@ bool check_wp() {
       printf("Bad expression,try again.\n");
       return false;
       }
-      printf("NO. %d watchpoint's value changed.", cur->NO);
+      printf("NO. %d watchpoint's value changed.\n", cur->NO);
       return true;
     }
     cur = cur->next;
   }
   return false;
+}
+
+void watchpoint_display() {
+  if (!wp_head->next) {
+    printf("No watchpoint.\n");
+  } else {
+    WP *cur = wp_head->next;
+    while (cur) {
+      printf("NO.%d watchpoint, expression = %s, init_val = %ld\n", 
+      cur->NO, cur->args, cur->val);
+      cur = cur->next;
+    }
+  }
 }
