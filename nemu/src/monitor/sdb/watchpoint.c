@@ -28,12 +28,7 @@ void init_wp_pool() {
     wp_pool[i].NO = i;
     wp_pool[i].next = (i == NR_WP - 1 ? NULL : &wp_pool[i + 1]);
   }
-  WP dummyhead;
-  dummyhead.args = " ";
-  dummyhead.next = NULL;
-  dummyhead.NO = -1;
-  dummyhead.val = 0;
-  wp_head = &dummyhead;
+  wp_head->next = NULL;
   wp_tail = wp_head;
   free_ = wp_pool;
   free_tail = wp_pool + NR_WP;
@@ -94,7 +89,7 @@ bool check_wp() {
 }
 
 void watchpoint_display() {
-  if (!wp_head->next) {
+  if (wp_head->next == NULL) {
     printf("No watchpoint.\n");
   } else {
     WP *cur = wp_head->next;
