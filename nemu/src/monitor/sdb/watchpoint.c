@@ -16,14 +16,7 @@
 #include "sdb.h"
 
 #define NR_WP 32
-
-typedef struct watchpoint {
-  int NO;
-  struct watchpoint *next;
-
-  /* TODO: Add more members if necessary */
-  bool status;
-} WP;
+#include "watchpoint.h"
 
 static WP wp_pool[NR_WP] = {};
 static WP *wp_head = NULL, *wp_tail = NULL,           // watch point list
@@ -76,4 +69,24 @@ WP* new_wp() {
     panic("No more free watch point nodes in wp_pool!\n");
     return free_;
   }
+}
+
+bool check_wp() {
+  if (!wp_head) {
+    return false;
+  }
+  WP *cur = wp_head;
+  bool success = true;
+  while (cur) {
+    if (cur->val != expr(cur->args, &success)) {
+      if (!success) {
+      printf("Bad expression,try again.\n");
+      return false;
+      }
+      printf("NO. %d watchpoint's value changed.", cur->NO);
+      return true;
+    }
+    cur = cur->next;
+  }
+  return false;
 }

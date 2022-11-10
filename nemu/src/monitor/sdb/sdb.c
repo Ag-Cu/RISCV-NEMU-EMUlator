@@ -19,11 +19,14 @@
 #include <memory/paddr.h>
 #include <readline/history.h>
 #include "sdb.h"
-
+#include "watchpoint.h"
 static int is_batch_mode = false;
+
+
 
 void init_regex();
 void init_wp_pool();
+
 
 
 /* We use the `readline' library to provide more flexibility to read from stdin. */
@@ -107,7 +110,15 @@ static int cmd_p(char *args) {
 }
 
 static int cmd_w(char *args) {
-  
+  bool success = true;
+  WP *new = new_wp();
+  new->args = args;
+  new->val = expr(args, &success);
+  if (!success) {
+    printf("Bad expression,try again.\n");
+    return 0;
+  }
+  return 0;
 }
 
   /* 
