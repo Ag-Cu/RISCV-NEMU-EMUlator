@@ -29,6 +29,10 @@ void init_wp_pool() {
     wp_pool[i].next = (i == NR_WP - 1 ? NULL : &wp_pool[i + 1]);
   }
   WP dummyhead;
+  dummyhead.args = " ";
+  dummyhead.next = NULL;
+  dummyhead.NO = -1;
+  dummyhead.val = 0;
   wp_head = &dummyhead;
   wp_tail = wp_head;
   free_ = wp_pool;
@@ -95,7 +99,7 @@ void watchpoint_display() {
   } else {
     WP *cur = wp_head->next;
     while (cur) {
-      printf("NO watchpoint\n");
+      printf("NO.%d watchpoint\n", cur->NO);
       cur = cur->next;
     }
   }
