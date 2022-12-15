@@ -30,4 +30,9 @@ static inline const char* reg_name(int idx, int width) {
   return regs[check_reg_idx(idx)];
 }
 
+word_t pc_add(word_t i) {
+  cpu.pc += i;
+  return cpu.pc;
+}
+
 #endif
