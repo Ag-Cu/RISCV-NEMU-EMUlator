@@ -102,6 +102,7 @@ word_t register_write(word_t imm, int idx) {
 
 void jump_jal(word_t imm, Decode *s) {
   s->snpc += 4;
+  printf("%ld", imm);
   assert(imm == 12);
   s->dnpc += imm;
 }
