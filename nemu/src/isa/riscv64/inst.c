@@ -91,8 +91,7 @@ int isa_exec_once(Decode *s) {
 }
 
 word_t pc_add(word_t i) {
-  cpu.pc += i;
-  return cpu.pc;
+  return cpu.pc + i;
 }
 
 word_t register_write(word_t imm, int idx) {
