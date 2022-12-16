@@ -102,6 +102,6 @@ word_t register_write(word_t imm, int idx) {
 
 void jump_jal(word_t imm, Decode *s) {
   s->snpc += 4;
-  assert(imm == 10);
+  assert(imm %2 == 0);
   s->dnpc += imm;
 }
