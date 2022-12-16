@@ -30,19 +30,5 @@ static inline const char* reg_name(int idx, int width) {
   return regs[check_reg_idx(idx)];
 }
 
-word_t pc_add(word_t i) {
-  cpu.pc += i;
-  return cpu.pc;
-}
-
-word_t register_write(word_t imm, int idx) {
-  cpu.gpr[check_reg_idx(idx)] += imm;
-  return cpu.gpr[check_reg_idx(idx)];
-}
-
-void jump_jal(word_t imm) {
-  cpu.npc += 4;
-  cpu.pc += imm;
-}
 
 #endif
