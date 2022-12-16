@@ -82,7 +82,6 @@ static int decode_exec(Decode *s) {
   INSTPAT_END();
 
   R(0) = 0; // reset $zero to 0
-  printf("%ld", imm);
   return 0;
 }
 
@@ -103,5 +102,6 @@ word_t register_write(word_t imm, int idx) {
 
 void jump_jal(word_t imm, Decode *s) {
   s->snpc += 4;
+  assert(imm == 12);
   s->dnpc += imm;
 }
