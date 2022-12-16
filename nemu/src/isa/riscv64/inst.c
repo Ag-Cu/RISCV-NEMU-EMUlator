@@ -100,6 +100,6 @@ word_t register_write(word_t imm, int idx) {
 }
 
 word_t jump_jal(int64_t imm, Decode *s) {
-  s->dnpc += 2 * imm ;
-  return cpu.pc + 4;
+  s->dnpc += 2 * imm - 4;
+  return s->snpc;
 }
