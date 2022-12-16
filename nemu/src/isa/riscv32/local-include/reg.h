@@ -35,4 +35,14 @@ word_t pc_add(word_t i) {
   return cpu.pc;
 }
 
+word_t register_write(word_t imm, int idx) {
+  cpu.gpr[check_reg_idx(idx)] += imm;
+  return cpu.gpr[check_reg_idx(idx)];
+}
+
+void jump_jal(word_t imm) {
+  cpu.npc += 4;
+  cpu.pc += imm;
+}
+
 #endif
