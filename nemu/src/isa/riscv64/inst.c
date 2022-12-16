@@ -108,6 +108,6 @@ word_t jump_jal(int64_t imm, Decode *s) {
 }
 
 word_t jump_jalr(int64_t imm, Decode *s, int rs1) {
-  s->dnpc = 2 + imm + rs1;
+  s->dnpc = 2 * imm + rs1;
   return s->snpc;
 }
