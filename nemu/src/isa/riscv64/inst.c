@@ -27,7 +27,7 @@
 
 word_t pc_add(word_t i);
 word_t register_write(word_t imm, int idx);
-void jump_jal(word_t imm, Decode *s);
+void jump_jal(int64_t imm, Decode *s);
 
 enum {
   TYPE_I, TYPE_U, TYPE_S, TYPE_J,
@@ -100,7 +100,7 @@ word_t register_write(word_t imm, int idx) {
   return cpu.gpr[check_reg_idx(idx)];
 }
 
-void jump_jal(word_t imm, Decode *s) {
+void jump_jal(int64_t imm, Decode *s) {
   s->snpc += 4;
   s->dnpc += 2 * imm ;
 }
