@@ -27,6 +27,7 @@
 #define Jalr jump_jalr
 #define SetIfLess cmp_and_return
 #define Bne branch_ifnot_equal
+#define Beq set_if_equal
 
 word_t pc_add(word_t i);
 word_t register_write(word_t imm, int idx);
@@ -34,6 +35,7 @@ word_t jump_jal(int64_t imm, Decode *s);
 word_t jump_jalr(int64_t imm, Decode *s, int rs1);
 word_t cmp_and_return(uint64_t src1, uint64_t imm);
 void branch_ifnot_equal(word_t src1, word_t src2, word_t imm, Decode *s);
+void set_if_equal(word_t src1, word_t src2, word_t imm, Decode *s);
 
 enum {
   TYPE_I, TYPE_U, TYPE_S, TYPE_J, TYPE_R,  TYPE_B,
@@ -91,10 +93,10 @@ static int decode_exec(Decode *s) {
   INSTPAT("0100000 ????? ????? 000 ????? 01100 11", sub    , R, Reg(dest) = src1 - src2);
   INSTPAT("??????? ????? ????? 011 ????? 00100 11", sltiu  , I, Reg(dest) = SetIfLess(src1, imm));
   INSTPAT("??????? ????? ????? 001 ????? 11000 11", bne    , B, Bne(src1, src2, imm, s));
+  INSTPAT("??????? ????? ????? 000 ????? 11000 11", beq    , B, Beq(src1, src2, imm, s));
   INSTPAT("??????? ????? ????? 000 ????? 00110 11", addiw  , I, Reg(dest) = SEXT(src1 + imm, 32)); 
   INSTPAT("??????? ????? ????? 011 ????? 00000 11", ld     , I, Reg(dest) = Mr(src1 + imm, 8)); 
   INSTPAT("0000000 ????? ????? 001 ????? 00100 11", slli   , I, Reg(dest) = imm << src1); 
-
 
 
 
@@ -138,6 +140,12 @@ word_t cmp_and_return(uint64_t src1, uint64_t imm) {
 
 void branch_ifnot_equal(word_t src1, word_t src2, word_t imm, Decode *s) {
   if (src1 != src2) {
+    s->dnpc += 2 * imm - 4;
+  }
+}
+
+void set_if_equal(word_t src1, word_t src2, word_t imm, Decode *s) {
+  if (src1 == src2) {
     s->dnpc += 2 * imm - 4;
   }
 }
