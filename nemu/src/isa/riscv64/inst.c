@@ -17,6 +17,7 @@
 #include <cpu/cpu.h>
 #include <cpu/ifetch.h>
 #include <cpu/decode.h>
+#include <math.h>
 
 #define Reg(i) gpr(i)
 #define Pa pc_add
@@ -156,6 +157,6 @@ word_t div_divw(word_t src1, uint64_t src2) {
   if (dividend == 0) {
     return 0;
   }
-  return divisor / dividend;
+  return round((double)divisor / dividend);
 }
 
