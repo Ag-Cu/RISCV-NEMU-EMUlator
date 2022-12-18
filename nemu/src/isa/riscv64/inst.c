@@ -32,7 +32,7 @@
 word_t pc_add(word_t i);
 word_t register_write(word_t imm, int idx);
 word_t jump_jal(int64_t imm, Decode *s);
-word_t jump_jalr(int64_t imm, Decode *s, int rs1);
+word_t jump_jalr(int64_t imm, Decode *s, uint32_t rs1);
 word_t cmp_and_return(uint64_t src1, uint64_t imm);
 void branch_ifnot_equal(word_t src1, word_t src2, word_t imm, Decode *s);
 void set_if_equal(word_t src1, word_t src2, word_t imm, Decode *s);
@@ -128,7 +128,7 @@ word_t jump_jal(int64_t imm, Decode *s) {
   return s->snpc;
 }
 
-word_t jump_jalr(int64_t imm, Decode *s, int rs1) {
+word_t jump_jalr(int64_t imm, Decode *s, uint32_t rs1) {
   s->dnpc = 2 * imm + rs1;
   return s->snpc;
 }
