@@ -22,7 +22,7 @@
 #define Pa pc_add
 #define Mr vaddr_read
 #define Mw vaddr_write
-#define Rw register_write
+#define Rw register_addi
 #define Jal jump_jal
 #define Jalr jump_jalr
 #define SetIfLess cmp_and_return
@@ -30,7 +30,7 @@
 #define Beq set_if_equal
 
 word_t pc_add(word_t i);
-word_t register_write(word_t imm, int idx);
+word_t register_addi(word_t imm, int idx);
 word_t jump_jal(int64_t imm, Decode *s);
 word_t jump_jalr(int64_t imm, Decode *s, uint32_t rs1);
 word_t cmp_and_return(uint64_t src1, uint64_t imm);
@@ -114,9 +114,8 @@ word_t pc_add(word_t i) {
   return cpu.pc + i;
 }
 
-word_t register_write(word_t imm, int idx) {
-  cpu.gpr[check_reg_idx(idx)] += imm;
-  return cpu.gpr[check_reg_idx(idx)];
+word_t register_addi(word_t imm, int idx) {
+  return cpu.gpr[check_reg_idx(idx)] + imm;
 }
 
 word_t jump_jal(int64_t imm, Decode *s) {
