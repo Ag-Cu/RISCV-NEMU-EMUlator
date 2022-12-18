@@ -151,9 +151,9 @@ void set_if_equal(word_t src1, word_t src2, word_t imm, Decode *s) {
   }
 }
 
-word_t div_divw(word_t src1, uint64_t src2) {
+word_t div_divw(word_t src1, word_t src2) {
   int32_t divisor = BITS(src1, 31, 0);
-  uint32_t dividend = BITS(src2, 31, 0);
+  int32_t dividend = BITS(src2, 31, 0);
   if (dividend == 0) {
     return 0;
   }
