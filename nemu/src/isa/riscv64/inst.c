@@ -28,6 +28,7 @@
 #define SetIfLess cmp_and_return
 #define Bne branch_ifnot_equal
 #define Beq set_if_equal
+#define Divw div_divw
 
 word_t pc_add(word_t i);
 word_t register_addi(word_t imm, int idx);
@@ -36,6 +37,7 @@ word_t jump_jalr(int64_t imm, Decode *s, uint32_t rs1);
 word_t cmp_and_return(uint64_t src1, uint64_t imm);
 void branch_ifnot_equal(word_t src1, word_t src2, word_t imm, Decode *s);
 void set_if_equal(word_t src1, word_t src2, word_t imm, Decode *s);
+word_t div_divw(word_t src1, uint64_t src2);
 
 enum {
   TYPE_I, TYPE_U, TYPE_S, TYPE_J, TYPE_R,  TYPE_B,
@@ -99,7 +101,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 001 ????? 00100 11", slli   , I, Reg(dest) = imm << src1); 
   INSTPAT("0000001 ????? ????? 000 ????? 01110 11", mulw   , R, Reg(dest) = SEXT(BITS(src1 * src2, 31, 0), 64));
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw     , S, Mw(src1 + imm, 4, BITS(src2, 31, 0)));
-  INSTPAT("0000001 ????? ????? 000 ????? 01110 11", divw   , R, Reg(dest) = SEXT(BITS(src1, 31, 0) / BITS(src2, 31, 0), 64));
+  INSTPAT("0000001 ????? ????? 000 ????? 01110 11", divw   , R, Reg(dest) = Divw(src1, src2));
 
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc)); 
   INSTPAT_END();
@@ -146,5 +148,14 @@ void set_if_equal(word_t src1, word_t src2, word_t imm, Decode *s) {
   if (src1 == src2) {
     s->dnpc += 2 * imm - 4;
   }
+}
+
+word_t div_divw(word_t src1, uint64_t src2) {
+  int32_t divisor = BITS(src1, 31, 0);
+  uint32_t dividend = BITS(src2, 31, 0);
+  if (dividend == 0) {
+    return 0;
+  }
+  return divisor / dividend;
 }
 
