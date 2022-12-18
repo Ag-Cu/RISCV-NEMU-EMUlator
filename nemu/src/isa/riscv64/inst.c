@@ -157,6 +157,6 @@ word_t div_divw(word_t src1, uint64_t src2) {
   if (dividend == 0) {
     return 0;
   }
-  return round((double)divisor / dividend);
+  return SEXT(divisor / dividend, 64);
 }
 
