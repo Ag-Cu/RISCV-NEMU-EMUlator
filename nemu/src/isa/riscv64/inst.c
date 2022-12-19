@@ -27,8 +27,7 @@
 #define Jal jump_jal
 #define Jalr jump_jalr
 #define SetIfLess cmp_and_return
-#define Bne branch_ifnot_equal
-#define Beq set_if_equal
+#define Branch branch
 #define Divw div_divw
 
 word_t pc_add(word_t i);
@@ -36,14 +35,17 @@ word_t register_addi(word_t imm, int idx);
 word_t jump_jal(int64_t imm, Decode *s);
 word_t jump_jalr(int64_t imm, Decode *s, uint32_t rs1);
 word_t cmp_and_return(uint64_t src1, uint64_t imm);
-void branch_ifnot_equal(word_t src1, word_t src2, word_t imm, Decode *s);
-void set_if_equal(word_t src1, word_t src2, word_t imm, Decode *s);
+void branch(uint64_t src1, uint64_t src2, uint64_t imm, Decode *s, int type);
 word_t div_divw(word_t src1, uint64_t src2);
 
 enum {
   TYPE_I, TYPE_U, TYPE_S, TYPE_J, TYPE_R,  TYPE_B,
   TYPE_N, // none
 };
+
+enum {
+  Beq = 512, Bge, Bgeu, Blt, Bltu, Bne,
+} branch_type;
 
 #define src1R() do { *src1 = Reg(rs1); } while (0)
 #define src2R() do { *src2 = Reg(rs2); } while (0)
@@ -95,11 +97,13 @@ static int decode_exec(Decode *s) {
   INSTPAT("0100000 ????? ????? 000 ????? 01110 11", subw   , R, Reg(dest) = SEXT(BITS(src1 - src2, 31, 0), 64));
   INSTPAT("0100000 ????? ????? 000 ????? 01100 11", sub    , R, Reg(dest) = src1 - src2);
   INSTPAT("??????? ????? ????? 011 ????? 00100 11", sltiu  , I, Reg(dest) = SetIfLess(src1, imm));
-  INSTPAT("??????? ????? ????? 001 ????? 11000 11", bne    , B, Bne(src1, src2, imm, s));
-  INSTPAT("??????? ????? ????? 000 ????? 11000 11", beq    , B, Beq(src1, src2, imm, s));
+  INSTPAT("??????? ????? ????? 001 ????? 11000 11", bne    , B, Branch(src1, src2, imm, s, Bne));
+  INSTPAT("??????? ????? ????? 000 ????? 11000 11", beq    , B, Branch(src1, src2, imm, s, Beq));
+  INSTPAT("??????? ????? ????? 101 ????? 11000 11", bge    , B, Branch(src1, src2, imm, s, Bge));
   INSTPAT("??????? ????? ????? 000 ????? 00110 11", addiw  , I, Reg(dest) = SEXT(BITS(src1 + imm, 31, 0), 64)); 
   INSTPAT("??????? ????? ????? 011 ????? 00000 11", ld     , I, Reg(dest) = Mr(src1 + imm, 8)); 
   INSTPAT("000000? ????? ????? 001 ????? 00100 11", slli   , I, Reg(dest) = (uint64_t)src1 << SEXT(BITS(imm, 4, 0), 5));
+  INSTPAT("000000? ????? ????? 001 ????? 00100 11", srli   , I, Reg(dest) = (uint64_t)src1 >> SEXT(BITS(imm, 4, 0), 5));
   INSTPAT("0000001 ????? ????? 000 ????? 01110 11", mulw   , R, Reg(dest) = SEXT(BITS(src1 * src2, 31, 0), 64));
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw     , S, Mw(src1 + imm, 4, BITS(src2, 31, 0)));
   INSTPAT("0000001 ????? ????? 100 ????? 01110 11", divw   , R, Reg(dest) = Divw(src1, src2));
@@ -139,15 +143,27 @@ word_t cmp_and_return(uint64_t src1, uint64_t imm) {
   return 0;
 }
 
-void branch_ifnot_equal(word_t src1, word_t src2, word_t imm, Decode *s) {
-  if (src1 != src2) {
-    s->dnpc += 2 * imm - 4;
-  }
-}
 
-void set_if_equal(word_t src1, word_t src2, word_t imm, Decode *s) {
-  if (src1 == src2) {
-    s->dnpc += 2 * imm - 4;
+void branch(word_t src1, word_t src2, word_t imm, Decode *s, int type) {
+  switch (type) {
+    case Beq: 
+      if (src1 == src2) {
+        s->dnpc += 2 * imm - 4;
+      }
+      break;
+    case Bne:
+      if (src1 != src2) {
+        s->dnpc += 2 * imm - 4;
+      }
+      break;
+    case Bge:
+      if (src1 >= src2) {
+        s->dnpc += 2 * imm - 4;
+      }
+      break;
+
+    default:
+      break;
   }
 }
 
