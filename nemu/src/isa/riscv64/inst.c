@@ -124,7 +124,7 @@ int isa_exec_once(Decode *s) {
 }
 
 word_t pc_add(word_t i) {
-  return cpu.pc + i;
+  return cpu.pc - 4 + i;
 }
 
 word_t register_addi(word_t imm, int idx) {
