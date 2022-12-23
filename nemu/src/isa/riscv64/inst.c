@@ -34,7 +34,7 @@ word_t pc_add(word_t i);
 word_t register_addi(word_t imm, int idx);
 word_t jump_jal(int64_t imm, Decode *s);
 word_t jump_jalr(int64_t imm, Decode *s, uint32_t rs1);
-word_t cmp_and_return(uint64_t src1, uint64_t imm);
+word_t cmp_and_return(uint64_t src1, uint64_t imm, int type);
 void branch(uint64_t src1, uint64_t src2, uint64_t imm, Decode *s, int type);
 word_t div_divw(word_t src1, uint64_t src2);
 
@@ -44,8 +44,8 @@ enum {
 };
 
 enum {
-  Beq = 512, Bge, Bgeu, Blt, Bltu, Bne,
-} branch_type;
+  Beq = 512, Bge, Bgeu, Blt, Bltu, Bne, Sltu, Sltiu,
+} Instruction_type;
 
 #define src1R() do { *src1 = Reg(rs1); } while (0)
 #define src2R() do { *src2 = Reg(rs2); } while (0)
@@ -97,7 +97,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 000 ????? 01110 11", addw   , R, Reg(dest) = SEXT(BITS(src1 + src2, 31, 0), 64));
   INSTPAT("0100000 ????? ????? 000 ????? 01110 11", subw   , R, Reg(dest) = SEXT(BITS(src1 - src2, 31, 0), 64));
   INSTPAT("0100000 ????? ????? 000 ????? 01100 11", sub    , R, Reg(dest) = src1 - src2);
-  INSTPAT("??????? ????? ????? 011 ????? 00100 11", sltiu  , I, Reg(dest) = SetIfLess(src1, imm));
+  INSTPAT("??????? ????? ????? 011 ????? 00100 11", sltiu  , I, Reg(dest) = SetIfLess(src1, SEXT(imm, 64), Sltiu));
   INSTPAT("??????? ????? ????? 001 ????? 11000 11", bne    , B, Branch(src1, src2, imm, s, Bne));
   INSTPAT("??????? ????? ????? 000 ????? 11000 11", beq    , B, Branch(src1, src2, imm, s, Beq));
   INSTPAT("??????? ????? ????? 101 ????? 11000 11", bge    , B, Branch(src1, src2, imm, s, Bge));
@@ -119,6 +119,8 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 ????? ????? 111 ????? 01100 11", and    , R, Reg(dest) = src1 & src2);
   INSTPAT("0000000 ????? ????? 110 ????? 01100 11", xor    , R, Reg(dest) = src1 ^ src2);
   INSTPAT("0000000 ????? ????? 100 ????? 01100 11", or     , R, Reg(dest) = src1 | src2);
+  INSTPAT("0000000 ????? ????? 011 ????? 01100 11", sltu   , R, Reg(dest) = SetIfLess(src1, src2, Sltu));
+  
 
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc)); 
   INSTPAT_END();
@@ -150,8 +152,20 @@ word_t jump_jalr(int64_t imm, Decode *s, uint32_t rs1) {
   return s->snpc;
 }
 
-word_t cmp_and_return(uint64_t src1, uint64_t imm) {
-  if (src1 < imm) return 1;
+word_t cmp_and_return(uint64_t num1, uint64_t num2, int type) {
+  switch (type)
+  {
+  case Sltu:
+    if (num1 < num2) return 1;
+      return 0;
+    break;
+  case Sltiu:
+    if (num1 < num2) return 1;
+      return 0;
+  default:
+    panic("cmp_and_return fuction falut!");
+    break;
+  }
   return 0;
 }
 
