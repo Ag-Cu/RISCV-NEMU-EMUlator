@@ -28,9 +28,7 @@
 #define SetIfLess cmp_and_return
 #define Branch branch
 #define Divw div_divw
-#define Pa pc_add
 
-word_t pc_add(word_t i);
 word_t register_addi(word_t imm, int idx);
 word_t jump_jal(int64_t imm, Decode *s);
 word_t jump_jalr(int64_t imm, Decode *s, uint32_t rs1);
@@ -86,7 +84,7 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? 010 ????? 00000 11", lw     , I, Reg(dest) = SEXT(Mr(src1 + imm, 4), 64));
   INSTPAT("??????? ????? ????? 010 ????? 01000 11", sw     , S, Mw(src1 + imm, 4, BITS(src2, 31, 0)));
   INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak , N, NEMUTRAP(s->pc, Reg(10))); // Reg(10) is $a0
-  INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc  , U, Reg(dest) = Pa(imm));
+  INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc  , U, Reg(dest) = s->pc + imm);
   INSTPAT("0000000 ????? ????? 000 ????? 01100 11", add    , R, Reg(dest) = src1 +src2);
   INSTPAT("??????? ????? ????? 000 ????? 00100 11", addi   , I, Reg(dest) = src1 + imm);
   INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal    , J, Reg(dest) = Jal(imm, s));
@@ -133,10 +131,6 @@ static int decode_exec(Decode *s) {
   return 0;
 }
 
-word_t pc_add(word_t i) {
-  return cpu.pc + i;
-}
-
 int isa_exec_once(Decode *s) {
   s->isa.inst.val = inst_fetch(&s->snpc, 4);
   return decode_exec(s);
@@ -152,7 +146,7 @@ word_t jump_jal(int64_t imm, Decode *s) {
 }
 
 word_t jump_jalr(int64_t imm, Decode *s, uint32_t src1) {
-  s->dnpc = 2 * (imm + src1) & ~1;
+  s->dnpc = (2 * (imm + src1)) & (~1);
   return s->snpc;
 }
 
