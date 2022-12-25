@@ -201,6 +201,7 @@ void branch(word_t src1, word_t src2, uint64_t imm, Decode *s, int type) {
       if ((int64_t)src1 < (int64_t)src2) {
         s->dnpc += 2 * imm - 4;
       }
+      break;
     case Bltu:
       if (src1 < src2) {
         s->dnpc += 2 * imm - 4;
