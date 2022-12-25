@@ -33,7 +33,7 @@ word_t register_addi(word_t imm, int idx);
 word_t jump_jal(int64_t imm, Decode *s);
 word_t jump_jalr(int64_t imm, Decode *s, uint32_t rs1);
 word_t cmp_and_return(uint64_t src1, uint64_t imm, int type);
-void branch(uint64_t src1, uint64_t src2, int64_t imm, Decode *s, int type);
+void branch(uint64_t src1, uint64_t src2, uint64_t imm, Decode *s, int type);
 word_t div_divw(word_t src1, uint64_t src2);
 
 enum {
@@ -180,7 +180,7 @@ word_t cmp_and_return(uint64_t num1, uint64_t num2, int type) {
 }
 
 
-void branch(word_t src1, word_t src2, int64_t imm, Decode *s, int type) {
+void branch(word_t src1, word_t src2, uint64_t imm, Decode *s, int type) {
   switch (type) {
     case Beq: 
       if (src1 == src2) {
