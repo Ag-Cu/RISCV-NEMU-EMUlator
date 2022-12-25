@@ -184,31 +184,31 @@ void branch(word_t src1, word_t src2, int64_t imm, Decode *s, int type) {
   switch (type) {
     case Beq: 
       if (src1 == src2) {
-        s->dnpc += imm - 4;
+        s->dnpc += 2 * imm - 4;
       }
       break;
     case Bne:
       if (src1 != src2) {
-        s->dnpc += imm - 4;
+        s->dnpc += 2 * imm - 4;
       }
       break;
     case Bge:
       if ((int64_t)src1 >= (int64_t)src2) {
-        s->dnpc += imm - 4;
+        s->dnpc += 2 * imm - 4;
       }
       break;
     case Blt:
       if ((int64_t)src1 < (int64_t)src2) {
-        s->dnpc += imm - 4;
+        s->dnpc += 2 * imm - 4;
       }
     case Bltu:
       if (src1 < src2) {
-        s->dnpc += imm - 4;
+        s->dnpc += 2 * imm - 4;
       }
       break;
     case Bgeu:
       if (src1 >= src2) {
-        s->dnpc += imm - 4;
+        s->dnpc += 2 * imm - 4;
       }
       break;
     default:
