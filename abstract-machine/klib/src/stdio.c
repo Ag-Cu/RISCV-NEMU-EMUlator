@@ -5,108 +5,124 @@
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
+static char HEX_CHARACTERS[] = "0123456789ABCDEF";
+#define BIT_WIDE_HEX 8
+
+#define append(x) {out[j++]=x; if (j >= n) {break;}}
+
 int printf(const char *fmt, ...) {
   panic("Not implemented");
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
-  panic("Not implemented");
+  return vsnprintf(out, -1, fmt, ap);
 }
 
 int sprintf(char *out, const char *fmt, ...) {
   va_list ap;
   va_start(ap, fmt);
 
-  while(*fmt != '\0') {
-    if(*fmt == '%') { // 如果是%开头，说明是格式化输出
-      fmt++;
-      switch(*fmt) {  // 根据后面的字符，输出不同的格式
-        case 'd': {
-          int num = va_arg(ap, int);  // 从ap中取出一个int类型的参数
-          char buf[20]; // 用于存放转换后的字符串
-          int i = 0;
-          if(num < 0) { // 如果是负数，先输出一个负号
-            out[i++] = '-';
-            num = -num;
-          }
-          do {  // 将数字转换成字符串
-            buf[i++] = num % 10 + '0';
-            num /= 10;
-          } while(num != 0);
-          while(i > 0) {  
-            *out++ = buf[--i];
-          }
-          break;
-        }
-        case 's': {
-          char *str = va_arg(ap, char *);
-          while(*str != '\0') {
-            *out++ = *str++;
-          }
-          break;
-        }
-        case 'x': {
-          int num = va_arg(ap, int);
-          char buf[20];
-          int i = 0;
-          do {
-            int tmp = num % 16;
-            if(tmp < 10) {
-              buf[i++] = tmp + '0';
-            } else {
-              buf[i++] = tmp - 10 + 'a';
-            }
-            num /= 16;
-          } while(num != 0);
-          while(i > 0) {
-            *out++ = buf[--i];
-          }
-          break;
-        }
-        case 'p': {
-          int num = va_arg(ap, int);
-          char buf[20];
-          int i = 0;
-          do {
-            int tmp = num % 16;
-            if(tmp < 10) {
-              buf[i++] = tmp + '0';
-            } else {
-              buf[i++] = tmp - 10 + 'a';
-            }
-            num /= 16;
-          } while(num != 0);
-          while(i > 0) {
-            *out++ = buf[--i];
-          }
-          break;
-        }
-        case 'c': {
-          char c = va_arg(ap, int);
-          *out++ = c;
-          break;
-        }
-        default: {
-          *out++ = *fmt;
-          break;
-        }
-      }
-    } else {
-      *out++ = *fmt;
-    }
-    fmt++;
-  }
-    
+  int ret = vsprintf(out, fmt, ap);
+
   va_end(ap);
-  return 0;
+  return ret;
 }
 
 int snprintf(char *out, size_t n, const char *fmt, ...) {
-  panic("Not implemented");
+  va_list ap;
+  va_start(ap, fmt);
+
+  int ret = vsnprintf(out, n, fmt, ap);
+
+  va_end(ap);
+  return ret;
 }
 
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
-  panic("Not implemented");
+    char buffer[128];
+  char *txt, cha;
+  int num, len;
+  unsigned int unum;
+  uint32_t pointer;
+  
+  
+  int state = 0, i, j;//模仿一个状态机
+  for (i = 0, j = 0; fmt[i] != '\0'; ++i){
+    switch (state)
+    {
+    case 0:
+      if (fmt[i] != '%'){
+        append(fmt[i]);
+      } else
+        state = 1;
+      break;
+    
+    case 1:
+      switch (fmt[i])
+      {
+      case 's':
+        txt = va_arg(ap, char*);
+        for (int k = 0; txt[k] !='\0'; ++k)
+          append(txt[k]);
+        break;
+      
+      case 'd':
+        num = va_arg(ap, int);
+        if(num == 0){
+          append('0');
+          break;
+        }
+        if (num < 0){
+          append('-');
+          num = 0 - num;
+        }
+        for (len = 0; num ; num /= 10, ++len)
+          //buffer[len] = num % 10 + '0';//逆序的
+          buffer[len] = HEX_CHARACTERS[num % 10];//逆序的
+        for (int k = len - 1; k >= 0; --k)
+          append(buffer[k]);
+        break;
+      
+      case 'c':
+        cha = (char)va_arg(ap, int);
+        append(cha);
+        break;
+
+      case 'p':
+        pointer = va_arg(ap, uint32_t);
+        for (len = 0; pointer ; pointer /= 16, ++len)
+          buffer[len] = HEX_CHARACTERS[pointer % 16];//逆序的
+        for (int k = 0; k < BIT_WIDE_HEX - len; ++k)
+          append('0');
+
+        for (int k = len - 1; k >= 0; --k)
+          append(buffer[k]);
+        break;
+
+      case 'x':
+        unum = va_arg(ap, unsigned int);
+        if(unum == 0){
+          append('0');
+          break;
+        }
+        for (len = 0; unum ; unum >>= 4, ++len)
+          buffer[len] = HEX_CHARACTERS[unum & 0xF];//逆序的
+
+        for (int k = len - 1; k >= 0; --k)
+          append(buffer[k]);
+        break;  
+
+      default:
+        assert(0);
+      }
+      state = 0;
+      break;
+      
+    }
+  }
+
+  out[j] = '\0';
+  return j;
 }
 
 #endif
