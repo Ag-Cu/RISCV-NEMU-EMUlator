@@ -11,7 +11,16 @@ static char HEX_CHARACTERS[] = "0123456789ABCDEF";
 #define append(x) {out[j++]=x; if (j >= n) {break;}}
 
 int printf(const char *fmt, ...) {
-  panic("Not implemented");
+  char buffer[2048];
+  va_list arg;
+  va_start (arg, fmt);
+  
+  int done = vsprintf(buffer, fmt, arg);
+
+  putstr(buffer);
+
+  va_end(arg);
+  return done;
 }
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
@@ -39,29 +48,29 @@ int snprintf(char *out, size_t n, const char *fmt, ...) {
 }
 
 int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
-    char buffer[128];
-  char *txt, cha;
-  int num, len;
-  unsigned int unum;
-  uint32_t pointer;
+  char buffer[128]; // 128 is enough for a 32-bit integer
+  char *txt, cha; //txt是字符串，cha是字符
+  int num, len; 
+  unsigned int unum;  
+  uint32_t pointer; 
   
   
-  int state = 0, i, j;//模仿一个状态机
+  int state = 0, i, j;//模仿一个状态机  0是初始状态  1是%状态
   for (i = 0, j = 0; fmt[i] != '\0'; ++i){
     switch (state)
     {
     case 0:
-      if (fmt[i] != '%'){
+      if (fmt[i] != '%'){ 
         append(fmt[i]);
-      } else
+      } else  
         state = 1;
       break;
     
-    case 1:
+    case 1: 
       switch (fmt[i])
       {
       case 's':
-        txt = va_arg(ap, char*);
+        txt = va_arg(ap, char*);  // va_arg(ap, type) 从ap中取出一个type类型的参数
         for (int k = 0; txt[k] !='\0'; ++k)
           append(txt[k]);
         break;
