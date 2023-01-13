@@ -18,6 +18,7 @@
 
 #include <isa.h>
 
+
 typedef struct Decode {
   vaddr_t pc;
   vaddr_t snpc; // static next pc

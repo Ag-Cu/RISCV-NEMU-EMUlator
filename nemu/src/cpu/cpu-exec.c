@@ -26,6 +26,17 @@
  */
 #define MAX_INST_TO_PRINT 10
 
+#ifdef CONFIG_ITRACE_COND
+#define RING_BUF_SIZE 16
+#define RING_BUF_ELEM_SIZE 128
+#define RINGBUF_ELEM(i) (ringbuf[(i) % RING_BUF_SIZE])
+
+char ringbuf[RING_BUF_SIZE][RING_BUF_ELEM_SIZE];
+int ringbuf_write_index = 0;
+int ringbuf_count = 0;
+
+#endif
+
 CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
@@ -35,7 +46,22 @@ void device_update();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
-  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
+  if (ITRACE_COND) {
+     log_write("%s\n", _this->logbuf); 
+     if (nemu_state.state != NEMU_ABORT) {
+      strncpy(RINGBUF_ELEM(ringbuf_write_index++), _this->logbuf, RING_BUF_ELEM_SIZE);
+      ringbuf_count++;
+     } else {
+      strncpy(RINGBUF_ELEM(ringbuf_write_index++), "Next instruction cause abortion!\n", RING_BUF_ELEM_SIZE);
+      strncpy(RINGBUF_ELEM(ringbuf_write_index++), _this->logbuf, RING_BUF_ELEM_SIZE);
+      // output ringbuf
+      int start = 0, log_num = ringbuf_count > RING_BUF_SIZE ? RING_BUF_SIZE : ringbuf_count;
+      if (ringbuf_count > RING_BUF_SIZE) start = ringbuf_write_index + 1;
+      for (int i = start; i < log_num; i++) {
+        printf("%s\n", RINGBUF_ELEM(i));
+      }
+     }
+     }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
