@@ -26,6 +26,7 @@
  */
 #define MAX_INST_TO_PRINT 10
 
+// 环形缓冲区
 #ifdef CONFIG_ITRACE_COND
 #define RING_BUF_SIZE 20
 #define RING_BUF_ELEM_SIZE 128
@@ -34,7 +35,6 @@
 char ringbuf[RING_BUF_SIZE][RING_BUF_ELEM_SIZE];
 int ringbuf_write_index = 0;
 int ringbuf_count = 0;
-
 #endif
 
 CPU_state cpu = {};
