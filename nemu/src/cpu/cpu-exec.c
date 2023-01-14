@@ -27,7 +27,7 @@
 #define MAX_INST_TO_PRINT 10
 
 #ifdef CONFIG_ITRACE_COND
-#define RING_BUF_SIZE 16
+#define RING_BUF_SIZE 20
 #define RING_BUF_ELEM_SIZE 128
 #define RINGBUF_ELEM(i) (ringbuf[(i) % RING_BUF_SIZE])
 
