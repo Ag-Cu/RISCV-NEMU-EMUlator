@@ -129,6 +129,10 @@ config MTRACE_COND
   bool "Enable memory trace"
   default y
 
+config BATCH_MODE
+  bool "Batch mode"
+  default y
+
 config TRACE
   bool "Enable tracer"
   default y
