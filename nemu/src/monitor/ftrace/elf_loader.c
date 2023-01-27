@@ -62,6 +62,7 @@ void init_elf(const char *elf_file) {
     }
 
     // print func_table
+    printf("func_num = %d", func_num);
     for (int i = 0; i < func_num; i++) {
         printf("func_table[%d]: addr = 0x%x, size = 0x%x, name = %s",
                  i, func_table[i].start_addr, func_table[i].size, func_table[i].func_name);
