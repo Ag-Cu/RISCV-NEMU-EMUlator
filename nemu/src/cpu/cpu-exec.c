@@ -18,6 +18,7 @@
 #include <cpu/difftest.h>
 #include <locale.h>
 #include "../monitor/sdb/watchpoint.h"
+#include "../monitor/ftrace/ftracer.h"
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -107,6 +108,10 @@ static void execute(uint64_t n) {
     g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);
     if (nemu_state.state != NEMU_RUNNING) break;
+    #ifdef CONFIG_FTRACE_COND
+    print_ftrace_info();        // print ftrace info
+    #endif
+
     IFDEF(CONFIG_DEVICE, device_update());
   }
 }

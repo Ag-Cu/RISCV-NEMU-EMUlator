@@ -15,6 +15,7 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
+#include "ftrace/ftracer.h"
 
 void init_rand();
 void init_log(const char *log_file);
@@ -128,6 +129,9 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Initialize the simple debugger. */
   init_sdb();
+
+  /* Initialize ftracer. */
+  init_ftracer(elf_file);
 
   IFDEF(CONFIG_ITRACE, init_disasm(
     MUXDEF(CONFIG_ISA_x86,     "i686",
