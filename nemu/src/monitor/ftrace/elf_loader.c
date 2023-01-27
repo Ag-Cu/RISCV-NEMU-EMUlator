@@ -20,7 +20,6 @@ FILE *read_file(const char *elf_file) {
 void init_elf(const char *elf_file) {
     // TODO();
     // Log("Initializing elf tables...");
-    // Log("Initializing elf tables...done");
     FILE *fp = read_file(elf_file);
     Elf32_Ehdr ehdr;                // elf header
     int ret1 = fread(&ehdr, sizeof(ehdr), 1, fp);
@@ -59,6 +58,7 @@ void init_elf(const char *elf_file) {
             }
             func_num = i;
         }
+        // Log("Initializing elf tables...done");
     }
 
     // print func_table
