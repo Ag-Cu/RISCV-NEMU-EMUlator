@@ -1,6 +1,11 @@
 #include "elf_loader.h"
 #include <elf.h>
 
+func_info func_table[1024] = {0};
+int func_num = 0;
+ftrace_info call_ret_table[1024] = {0};
+int ftrace_index = 0;
+
 
 FILE *read_file(const char *elf_file) {
     FILE *fp = fopen(elf_file, "rb");

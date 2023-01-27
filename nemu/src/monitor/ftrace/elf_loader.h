@@ -20,12 +20,12 @@ typedef struct {
     uint8_t type;       // 0 is call, 1 is ret
 } ftrace_info;
 
-func_info func_table[1024] = {0};
+extern func_info func_table[1024];
 
-int func_num = 0;
+extern int func_num;
 
-ftrace_info call_ret_table[1024] = {0};
+extern ftrace_info call_ret_table[1024];
 
-int ftrace_index = 0;
+extern int ftrace_index;
 
 #endif
