@@ -109,7 +109,7 @@ static void execute(uint64_t n) {
     trace_and_difftest(&s, cpu.pc);
     if (nemu_state.state != NEMU_RUNNING) break;
     #ifdef CONFIG_FTRACE_COND
-    print_ftrace_info();        // print ftrace info
+    // print_ftrace_info();        // print ftrace info
     #endif
 
     IFDEF(CONFIG_DEVICE, device_update());
