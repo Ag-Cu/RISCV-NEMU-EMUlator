@@ -8,6 +8,7 @@ int ftrace_index = 0;
 
 
 FILE *read_file(const char *elf_file) {
+    printf("Loading from %s\n", elf_file);
     FILE *fp = fopen(elf_file, "rb");
     Assert(fp, "Can not open '%s'", elf_file);
     return fp;
