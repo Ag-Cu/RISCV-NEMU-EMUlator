@@ -49,7 +49,7 @@ void init_elf(const char *elf_file) {
 
 
                 // 打印symbol table
-                printf("sym.st_name = %d, sym.st_info = %d, sym.st_other = %d, sym.st_shndx = %d, sym.st_value = %ld, sym.st_size = %ld\n",
+                printf("sym.st_name = %d, sym.st_info = %d, sym.st_other = %d, sym.st_shndx = %d, sym.st_value = %lx, sym.st_size = %ld\n",
                         sym.st_name, sym.st_info, sym.st_other, sym.st_shndx, sym.st_value, sym.st_size);
 
                 if (ret3 != 1) {
