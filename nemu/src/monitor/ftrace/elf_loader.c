@@ -72,7 +72,7 @@ void init_elf(const char *elf_file) {
                     func_info info = {addr, size, func_name};
                     func_table[i++] = info;
                     // 回复文件指针
-                    fseek(fp, ehdr.e_shoff + i * sizeof(shdr), SEEK_SET);
+                    fseek(fp, ehdr.e_shoff + (i-1) * sizeof(shdr), SEEK_SET);
                 }
             }
             func_num = i;
