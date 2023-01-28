@@ -153,7 +153,7 @@ word_t jump_jal(int64_t imm, Decode *s) {
   s->dnpc += 2 * imm - 4;
   char *func_name = get_func_name(s->dnpc);
   if (func_name) {
-    ftrace_info temp = {func_name, s->dnpc, 1};
+    ftrace_info temp = {func_name, s->dnpc, 0};
     call_ret_table[ftrace_index++] = temp;
   }
   return s->snpc;
