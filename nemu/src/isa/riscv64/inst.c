@@ -160,8 +160,10 @@ word_t jump_jal(int64_t imm, Decode *s) {
 word_t jump_jalr(int64_t imm, Decode *s, uint32_t src1) {
   s->dnpc = (2 * imm + src1) & ~1;
   char *func_name = get_func_name(s->dnpc);
-  ftrace_info temp = {func_name, s->dnpc, 1};
-  call_ret_table[ftrace_index++] = temp;
+  if (func_name) {
+    ftrace_info temp = {func_name, s->dnpc, 1};
+    call_ret_table[ftrace_index++] = temp;
+  }
   return s->snpc;
 }
 

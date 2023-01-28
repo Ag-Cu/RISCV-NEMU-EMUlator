@@ -10,7 +10,7 @@ char *get_func_name(uint32_t addr) {
             return func_table[i].func_name;
         } 
     }
-    return "???";
+    return NULL;
 }
 
 void print_ftrace_info(){
@@ -21,7 +21,7 @@ void print_ftrace_info(){
             printf(" ");
         }
         char *type = call_ret_table[i].type == 0 ? "call" : "ret";
-        printf(" [%s@0x%x]\n", type, call_ret_table[i].addr);
+        printf(" [%s@%s0x%x]\n", type,call_ret_table[i].func_name, call_ret_table[i].addr);
         if (call_ret_table[i].type == 0) {
             ++blank_num;
         } else {
