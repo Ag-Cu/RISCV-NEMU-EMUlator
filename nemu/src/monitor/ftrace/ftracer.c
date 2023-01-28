@@ -22,19 +22,21 @@ char *get_func_name(uint32_t cur_addr, uint32_t des_addr, int *type) {
 }
 
 void print_ftrace_info(){
-    int blank_num = 0;
+    int blank_num = -1;
     for (int i = 0; i < ftrace_index; ++i) {
+        
+        if (call_ret_table[i].type == 0) {
+            ++blank_num;
+        } else {
+            --blank_num;
+        }
+
         printf("0x%x: ", call_ret_table[i].ins_addr);
         for (int i = 0; i < blank_num; i++) {
             printf(" ");
         }
         char *type = call_ret_table[i].type == 0 ? "call" : "ret";
         printf("%s [@%s 0x%x]\n", type,call_ret_table[i].func_name, call_ret_table[i].des_addr);
-        if (call_ret_table[i].type == 0) {
-            ++blank_num;
-        } else {
-            --blank_num;
-        }
     }
 }
 
