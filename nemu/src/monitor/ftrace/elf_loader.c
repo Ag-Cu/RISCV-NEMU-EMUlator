@@ -26,16 +26,27 @@ void init_elf(const char *elf_file) {
     assert(ret1 == 1);
 
     Elf64_Shdr shdr;                // section header
+    long strtab_offset = -1;        // string table offset
+
+    // 获取符号表的位置
     fseek(fp, ehdr.e_shoff, SEEK_SET);
-    
-    // read section header
     for (int i = 0; i < ehdr.e_shnum; i++) {
         int ret2 = fread(&shdr, sizeof(shdr), 1, fp);
         assert(ret2 == 1);
-        // 打印section header
-/*     printf("sh_name: %d, sh_type: %d, sh_flags: %ld, sh_addr: %ld, sh_offset: %ld, sh_size: %ld, sh_link: %d, sh_info: %d, sh_addralign: %ld, sh_entsize: %ld\n",
-                shdr.sh_name, shdr.sh_type, shdr.sh_flags, shdr.sh_addr, shdr.sh_offset, shdr.sh_size, shdr.sh_link, shdr.sh_info, shdr.sh_addralign, shdr.sh_entsize);
-*/      if (shdr.sh_type == SHT_SYMTAB) {
+
+        if (shdr.sh_type == SHT_STRTAB) {
+            strtab_offset = shdr.sh_offset;
+            break;
+        }
+    }
+    
+    // read section header
+    fseek(fp, ehdr.e_shoff, SEEK_SET);
+    for (int i = 0; i < ehdr.e_shnum; i++) {
+        int ret2 = fread(&shdr, sizeof(shdr), 1, fp);
+        assert(ret2 == 1);
+
+        if (shdr.sh_type == SHT_SYMTAB) {
             // read symbol table
             Elf64_Sym sym;
             fseek(fp, shdr.sh_offset, SEEK_SET);        // move to symbol table
@@ -60,8 +71,10 @@ void init_elf(const char *elf_file) {
                     // read function name
                     char *func_name = (char *)malloc(32);
                     // 从字符串表中读取对应函数名
-                    fseek(fp, ehdr.e_shoff + ehdr.e_shstrndx * sizeof(shdr), SEEK_SET);
+
+                    fseek(fp, strtab_offset + sym.st_name, SEEK_SET);
                     int ret4 = fread(func_name, 32, 1, fp);
+
                     assert(ret4 == 1);
                     // read function address
                     uint32_t addr = sym.st_value;
