@@ -17,7 +17,7 @@ typedef struct {
 
 typedef struct {
     char *func_name;        
-    uint32_t addr;
+    uint32_t des_addr;
     uint8_t type;       // 0 is call, 1 is ret
     uint32_t ins_addr;  // the address of the instruction
 } ftrace_info;
