@@ -48,13 +48,13 @@ void init_elf(const char *elf_file) {
                 int ret3 = fread(&sym, sizeof(sym), 1, fp);
 
 
+                // 打印symbol table
+                printf("sym.st_name = %d, sym.st_info = %d, sym.st_other = %d, sym.st_shndx = %d, sym.st_value = %ld, sym.st_size = %ld\n",
+                        sym.st_name, sym.st_info, sym.st_other, sym.st_shndx, sym.st_value, sym.st_size);
+
                 if (ret3 != 1) {
                     // 打印调试信息
                     printf("j = %d, shdr.sh_size = %ld, sizeof(sym) = %ld, ret3 = %d\n", j, shdr.sh_size, sizeof(sym), ret3);
-                }
-                if (j == 23) {
-                    printf("sym.st_name = %d, sym.st_info = %d, sym.st_other = %d, sym.st_shndx = %d, sym.st_value = %ld, sym.st_size = %ld\n",
-                            sym.st_name, sym.st_info, sym.st_other, sym.st_shndx, sym.st_value, sym.st_size);
                 }
 
                 assert(ret3 == 1);
