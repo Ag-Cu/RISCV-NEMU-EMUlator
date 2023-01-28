@@ -59,6 +59,8 @@ void init_elf(const char *elf_file) {
 
                 assert(ret3 == 1);
                 if (ELF64_ST_TYPE(sym.st_info) == STT_FUNC) {  // ELF64_ST_TYPE的作用是取出符号类型
+                    // 记录当前文件指针的位置
+                    long cur_pos = ftell(fp);
                     // read function name
                     char *func_name = (char *)malloc(32);
                     fseek(fp, shdr.sh_link * sizeof(shdr) + ehdr.e_shoff + sym.st_name, SEEK_SET);      // move to function name
@@ -72,7 +74,7 @@ void init_elf(const char *elf_file) {
                     func_info info = {addr, size, func_name};
                     func_table[i++] = info;
                     // 回复文件指针
-                    fseek(fp, ehdr.e_shoff + (i-1) * sizeof(shdr), SEEK_SET);
+                    fseek(fp, cur_pos, SEEK_SET);
                 }
             }
             func_num = i;
