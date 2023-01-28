@@ -32,6 +32,9 @@ void init_elf(const char *elf_file) {
     for (int i = 0; i < ehdr.e_shnum; i++) {
         int ret2 = fread(&shdr, sizeof(shdr), 1, fp);
         assert(ret2 == 1);
+        // 打印section header
+        printf("sh_name: %d, sh_type: %d, sh_flags: %d, sh_addr: %d, sh_offset: %d, sh_size: %d, sh_link: %d, sh_info: %d, sh_addralign: %d, sh_entsize: %d\n",
+         shdr.sh_name, shdr.sh_type, shdr.sh_flags, shdr.sh_addr, shdr.sh_offset, shdr.sh_size, shdr.sh_link, shdr.sh_info, shdr.sh_addralign, shdr.sh_entsize);
         if (shdr.sh_type == SHT_SYMTAB) {
             // read symbol table
             Elf32_Sym sym;
