@@ -60,7 +60,7 @@ void init_elf(const char *elf_file) {
                     // read function name
                     char *func_name = (char *)malloc(32);
                     // 从字符串表中读取对应函数名
-                    fseek(fp, ehdr.e_shoff + ehdr.e_shstrndx * sizeof(shdr) + shdr.sh_name, SEEK_SET);
+                    fseek(fp, ehdr.e_shoff + ehdr.e_shstrndx * sizeof(shdr) + sym.st_name, SEEK_SET);
                     int ret4 = fread(func_name, 32, 1, fp);
                     assert(ret4 == 1);
                     // read function address
