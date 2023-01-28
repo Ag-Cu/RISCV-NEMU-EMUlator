@@ -46,6 +46,10 @@ void init_elf(const char *elf_file) {
             int i = 0;
             for (int j = 0; j < shdr.sh_size / sizeof(sym); j++) {      // read symbol table
                 int ret3 = fread(&sym, sizeof(sym), 1, fp);
+                if (ret3 != 1) {
+                    // 打印调试信息
+                    printf("j = %d, shdr.sh_size = %ld, sizeof(sym) = %ld, ret3 = %d\n", j, shdr.sh_size, sizeof(sym), ret3);
+                }
                 assert(ret3 == 1);
                 if (ELF64_ST_TYPE(sym.st_info) == STT_FUNC) {  // ELF64_ST_TYPE的作用是取出符号类型
                     // read function name
