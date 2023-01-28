@@ -2,13 +2,17 @@
 
 
 
-char *get_func_name(uint32_t addr) {
+char *get_func_name(uint32_t addr, int *type) {
     for (int i = 0; i < func_num; ++i) {
         uint32_t start_addr = func_table[i].start_addr;
         uint32_t size = func_table[i].size;
-        if (addr >= start_addr && addr < start_addr + size) {
+        if (addr == start_addr) {
+            *type = 0;       // call
             return func_table[i].func_name;
-        } 
+        }else if (addr > start_addr && addr < start_addr + size) {
+            *type = 1;       // ret
+            return func_table[i].func_name;
+        }
     }
     return NULL;
 }

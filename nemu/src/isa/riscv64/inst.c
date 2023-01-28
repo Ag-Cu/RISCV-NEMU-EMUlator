@@ -151,10 +151,11 @@ word_t register_addi(word_t imm, int idx) {
 
 word_t jump_jal(int64_t imm, Decode *s, int dest) {
   s->dnpc += 2 * imm - 4;
+  int is_ret = -1;
   if (dest == 1) {
-    char *func_name = get_func_name(s->dnpc);
+    char *func_name = get_func_name(s->dnpc, &is_ret);
     if (func_name) {
-      ftrace_info temp = {func_name, s->dnpc, 0};
+      ftrace_info temp = {func_name, s->dnpc, is_ret};
       call_ret_table[ftrace_index++] = temp;
     }
   }
@@ -165,10 +166,12 @@ word_t jump_jalr(int64_t imm, Decode *s, uint32_t src1, int dest) {
   s->dnpc = (2 * imm + src1) & ~1;
   uint32_t i = s->isa.inst.val;
   int rs1 = BITS(i, 19, 15);
+  int is_ret = -1;
   if (dest == 0 && rs1 == 1) {
-    char *func_name = get_func_name(s->dnpc);
+    char *func_name = get_func_name(s->dnpc, &is_ret);
     if (func_name) {
-      ftrace_info temp = {func_name, s->dnpc, 1};
+      assert(is_ret != -1);
+      ftrace_info temp = {func_name, s->dnpc, is_ret};
       call_ret_table[ftrace_index++] = temp;
     }
   }
