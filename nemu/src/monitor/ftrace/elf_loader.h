@@ -8,6 +8,7 @@ void init_elf(const char *elf_file);
 
 bool examine_elf(uint32_t addr);
 
+
 typedef struct {
     uint32_t start_addr;    // start address of the function
     uint32_t size;          // size of the function
