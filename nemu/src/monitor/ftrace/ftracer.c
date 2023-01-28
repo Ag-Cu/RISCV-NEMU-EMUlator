@@ -6,7 +6,7 @@ char *get_func_name(uint32_t addr) {
     for (int i = 0; i < func_num; ++i) {
         int start_addr = func_table[i].start_addr;
         int size = func_table[i].size;
-        if (addr > start_addr && addr < start_addr + size) {
+        if (addr >= start_addr && addr <= start_addr + size) {
             return func_table[i].func_name;
         } 
     }
@@ -15,7 +15,6 @@ char *get_func_name(uint32_t addr) {
 
 void print_ftrace_info(){
     int blank_num = 0;
-    assert(blank_num >=0);
     for (int i = 0; i < ftrace_index; ++i) {
         for (int i = 0; i < blank_num; i++) {
             printf(" ");
