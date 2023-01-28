@@ -60,7 +60,7 @@ void init_elf(const char *elf_file) {
                     // add to ftrace_info
                     func_info info = {addr, size, func_name};
                     func_table[i++] = info;
-                    free(func_name);
+                    // free(func_name);
                 }
             }
             func_num = i;
