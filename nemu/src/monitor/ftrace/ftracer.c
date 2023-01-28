@@ -6,7 +6,7 @@ char *get_func_name(uint32_t addr) {
     for (int i = 0; i < func_num; ++i) {
         int start_addr = func_table[i].start_addr;
         int size = func_table[i].size;
-        if (addr >= start_addr && addr <= start_addr + size) {
+        if (addr >= start_addr && addr < start_addr + size) {
             return func_table[i].func_name;
         } 
     }
@@ -20,7 +20,7 @@ void print_ftrace_info(){
             printf(" ");
         }
         char *type = call_ret_table[i].type == 0 ? "call" : "ret";
-        printf(" [%s@%s0x%x]\n", type,call_ret_table[i].func_name, call_ret_table[i].addr);
+        printf("%s [@%s 0x%x]\n", type,call_ret_table[i].func_name, call_ret_table[i].addr);
         if (call_ret_table[i].type == 0) {
             ++blank_num;
         } else {
