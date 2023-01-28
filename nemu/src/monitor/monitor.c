@@ -15,7 +15,10 @@
 
 #include <isa.h>
 #include <memory/paddr.h>
+
+#ifdef CONFIG_FTRACE_COND
 #include "ftrace/ftracer.h"
+#endif
 
 void init_rand();
 void init_log(const char *log_file);
@@ -129,7 +132,7 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Initialize the simple debugger. */
   init_sdb();
-  
+
   #ifdef CONFIG_FTRACE_COND
   /* Initialize ftracer. */
   init_ftracer(elf_file);

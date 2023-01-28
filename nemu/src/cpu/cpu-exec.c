@@ -17,8 +17,14 @@
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
+
+#ifdef CONFIG_WATCHPOINT
 #include "../monitor/sdb/watchpoint.h"
+#endif
+
+#ifdef CONFIG_FTRACE_COND
 #include "../monitor/ftrace/ftracer.h"
+#endif
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
