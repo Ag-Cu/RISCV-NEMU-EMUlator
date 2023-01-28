@@ -31,8 +31,8 @@
 #define Divw div_divw
 
 word_t register_addi(word_t imm, int idx);
-word_t jump_jal(int64_t imm, Decode *s);
-word_t jump_jalr(int64_t imm, Decode *s, uint32_t rs1);
+word_t jump_jal(int64_t imm, Decode *s, int dest);
+word_t jump_jalr(int64_t imm, Decode *s, uint32_t rs1, int dest);
 word_t cmp_and_return(uint64_t src1, uint64_t imm, int type);
 void branch(uint64_t src1, uint64_t src2, uint64_t imm, Decode *s, int type);
 word_t div_divw(word_t src1, uint64_t src2);
@@ -88,8 +88,8 @@ static int decode_exec(Decode *s) {
   INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc  , U, Reg(dest) = s->pc + imm);
   INSTPAT("0000000 ????? ????? 000 ????? 01100 11", add    , R, Reg(dest) = src1 +src2);
   INSTPAT("??????? ????? ????? 000 ????? 00100 11", addi   , I, Reg(dest) = src1 + imm);
-  INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal    , J, Reg(dest) = Jal(imm, s));                           // 函数跳转指令
-  INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr   , I, Reg(dest) = Jalr(imm, s, src1));                    // 函数返回指令
+  INSTPAT("??????? ????? ????? ??? ????? 11011 11", jal    , J, Reg(dest) = Jal(imm, s, dest));                           // 函数跳转指令
+  INSTPAT("??????? ????? ????? 000 ????? 11001 11", jalr   , I, Reg(dest) = Jalr(imm, s, src1, dest));                    // 函数返回指令
   INSTPAT("??????? ????? ????? 011 ????? 01000 11", sd     , S, Mw(src1 + imm, 8, src2));
   INSTPAT("0000000 ????? ????? 000 ????? 01110 11", addw   , R, Reg(dest) = SEXT(BITS(src1 + src2, 31, 0), 32));
   INSTPAT("0100000 ????? ????? 000 ????? 01110 11", subw   , R, Reg(dest) = SEXT(BITS(src1 - src2, 31, 0), 32));
@@ -149,22 +149,26 @@ word_t register_addi(word_t imm, int idx) {
   return cpu.gpr[check_reg_idx(idx)] + imm;
 }
 
-word_t jump_jal(int64_t imm, Decode *s) {
+word_t jump_jal(int64_t imm, Decode *s, int dest) {
   s->dnpc += 2 * imm - 4;
-  char *func_name = get_func_name(s->dnpc);
-  if (func_name) {
-    ftrace_info temp = {func_name, s->dnpc, 0};
-    call_ret_table[ftrace_index++] = temp;
+  if (dest == 1) {
+    char *func_name = get_func_name(s->dnpc);
+    if (func_name) {
+      ftrace_info temp = {func_name, s->dnpc, 0};
+      call_ret_table[ftrace_index++] = temp;
+    }
   }
   return s->snpc;
 }
 
-word_t jump_jalr(int64_t imm, Decode *s, uint32_t src1) {
+word_t jump_jalr(int64_t imm, Decode *s, uint32_t src1, int dest) {
   s->dnpc = (2 * imm + src1) & ~1;
-  char *func_name = get_func_name(s->dnpc);
-  if (func_name) {
-    ftrace_info temp = {func_name, s->dnpc, 1};
-    call_ret_table[ftrace_index++] = temp;
+  if (src1 == 0 && dest == 1) {
+    char *func_name = get_func_name(s->dnpc);
+    if (func_name) {
+      ftrace_info temp = {func_name, s->dnpc, 1};
+      call_ret_table[ftrace_index++] = temp;
+    }
   }
   return s->snpc;
 }
