@@ -153,13 +153,12 @@ word_t jump_jal(int64_t imm, Decode *s, int dest) {
   s->dnpc += 2 * imm - 4;
   #ifdef CONFIG_FTRACE_COND
   int is_ret = -1;
-  if (dest == 1) {
-    char *func_name = get_func_name(s->dnpc, &is_ret);
-    if (func_name) {
-      ftrace_info temp = {func_name, s->dnpc, is_ret, s->snpc - 4};
-      call_ret_table[ftrace_index++] = temp;
-    }
+  char *func_name = get_func_name(s->dnpc, &is_ret);
+  if (func_name) {
+    ftrace_info temp = {func_name, s->dnpc, is_ret, s->snpc - 4};
+    call_ret_table[ftrace_index++] = temp;
   }
+
   #endif
   return s->snpc;
 }
