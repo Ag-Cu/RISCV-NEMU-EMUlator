@@ -25,10 +25,6 @@ void init_elf(const char *elf_file) {
     int ret1 = fread(&ehdr, sizeof(ehdr), 1, fp);
     assert(ret1 == 1);
 
-    // 打印elf header
-/*  printf("e_ident: %s, e_type: %d, e_machine: %d, e_version: %d, e_entry: %lx, e_phoff: %ld, e_shoff: %ld, e_flags: %d, e_ehsize: %d, e_phentsize: %d, e_phnum: %d, e_shentsize: %d, e_shnum: %d, e_shstrndx: %d\n",
-            ehdr.e_ident, ehdr.e_type, ehdr.e_machine, ehdr.e_version, ehdr.e_entry, ehdr.e_phoff, ehdr.e_shoff, ehdr.e_flags, ehdr.e_ehsize, ehdr.e_phentsize, ehdr.e_phnum, ehdr.e_shentsize, ehdr.e_shnum, ehdr.e_shstrndx);
-*/
     Elf64_Shdr shdr;                // section header
     fseek(fp, ehdr.e_shoff, SEEK_SET);
     
@@ -63,8 +59,8 @@ void init_elf(const char *elf_file) {
                     long cur_pos = ftell(fp);
                     // read function name
                     char *func_name = (char *)malloc(32);
-                    // 读取函数名
-                    fseek(fp, shdr.sh_offset + sym.st_name, SEEK_SET);
+                    // 从字符串表中读取对应函数名
+                    fseek(fp, ehdr.e_shoff + ehdr.e_shstrndx * sizeof(shdr) + shdr.sh_name, SEEK_SET);
                     int ret4 = fread(func_name, 32, 1, fp);
                     assert(ret4 == 1);
                     // read function address
