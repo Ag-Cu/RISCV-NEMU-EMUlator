@@ -26,7 +26,7 @@ void init_elf(const char *elf_file) {
     assert(ret1 == 1);
 
     // 打印elf header
-    printf("e_ident: %s, e_type: %d, e_machine: %d, e_version: %d, e_entry: %ld, e_phoff: %ld, e_shoff: %ld, e_flags: %d, e_ehsize: %d, e_phentsize: %d, e_phnum: %d, e_shentsize: %d, e_shnum: %d, e_shstrndx: %d\n",
+    printf("e_ident: %s, e_type: %d, e_machine: %d, e_version: %d, e_entry: %lx, e_phoff: %ld, e_shoff: %ld, e_flags: %d, e_ehsize: %d, e_phentsize: %d, e_phnum: %d, e_shentsize: %d, e_shnum: %d, e_shstrndx: %d\n",
         ehdr.e_ident, ehdr.e_type, ehdr.e_machine, ehdr.e_version, ehdr.e_entry, ehdr.e_phoff, ehdr.e_shoff, ehdr.e_flags, ehdr.e_ehsize, ehdr.e_phentsize, ehdr.e_phnum, ehdr.e_shentsize, ehdr.e_shnum, ehdr.e_shstrndx);
 
     Elf64_Shdr shdr;                // section header
