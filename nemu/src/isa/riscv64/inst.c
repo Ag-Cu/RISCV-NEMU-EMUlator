@@ -165,7 +165,7 @@ word_t jump_jalr(int64_t imm, Decode *s, uint32_t src1, int dest) {
   s->dnpc = (2 * imm + src1) & ~1;
   uint32_t i = s->isa.inst.val;
   int rs1 = BITS(i, 19, 15);
-  if (dest == 1 && rs1 == 0) {
+  if (dest == 0 && rs1 == 1) {
     char *func_name = get_func_name(s->dnpc);
     if (func_name) {
       ftrace_info temp = {func_name, s->dnpc, 1};
