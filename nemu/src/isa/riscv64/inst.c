@@ -166,17 +166,13 @@ word_t jump_jal(int64_t imm, Decode *s, int dest) {
 word_t jump_jalr(int64_t imm, Decode *s, uint32_t src1, int dest) {
   s->dnpc = (2 * imm + src1) & ~1;
   #ifdef CONFIG_FTRACE_COND
-  uint32_t i = s->isa.inst.val;
-  int rs1 = BITS(i, 19, 15);
   int is_ret = -1;
-  if (dest == 0 && rs1 == 1) {
     char *func_name = get_func_name(s->snpc - 4, s->dnpc, &is_ret);
     if (func_name) {
       assert(is_ret != -1);
       ftrace_info temp = {func_name, s->dnpc, is_ret, s->snpc - 4};
       call_ret_table[ftrace_index++] = temp;
     }
-  }
   #endif
   return s->snpc;
 }
