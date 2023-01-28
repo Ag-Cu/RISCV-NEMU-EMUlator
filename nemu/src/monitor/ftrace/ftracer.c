@@ -20,6 +20,7 @@ char *get_func_name(uint32_t addr, int *type) {
 void print_ftrace_info(){
     int blank_num = 0;
     for (int i = 0; i < ftrace_index; ++i) {
+        printf("0x%x: ", call_ret_table[i].ins_addr);
         for (int i = 0; i < blank_num; i++) {
             printf(" ");
         }

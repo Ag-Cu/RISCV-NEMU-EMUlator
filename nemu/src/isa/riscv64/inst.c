@@ -156,7 +156,7 @@ word_t jump_jal(int64_t imm, Decode *s, int dest) {
   if (dest == 1) {
     char *func_name = get_func_name(s->dnpc, &is_ret);
     if (func_name) {
-      ftrace_info temp = {func_name, s->dnpc, is_ret};
+      ftrace_info temp = {func_name, s->dnpc, is_ret, s->snpc - 4};
       call_ret_table[ftrace_index++] = temp;
     }
   }
@@ -174,7 +174,7 @@ word_t jump_jalr(int64_t imm, Decode *s, uint32_t src1, int dest) {
     char *func_name = get_func_name(s->dnpc, &is_ret);
     if (func_name) {
       assert(is_ret != -1);
-      ftrace_info temp = {func_name, s->dnpc, is_ret};
+      ftrace_info temp = {func_name, s->dnpc, is_ret, s->snpc - 4};
       call_ret_table[ftrace_index++] = temp;
     }
   }
