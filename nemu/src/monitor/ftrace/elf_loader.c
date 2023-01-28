@@ -63,7 +63,8 @@ void init_elf(const char *elf_file) {
                     long cur_pos = ftell(fp);
                     // read function name
                     char *func_name = (char *)malloc(32);
-                    fseek(fp, shdr.sh_link * sizeof(shdr) + ehdr.e_shoff + sym.st_name, SEEK_SET);      // move to function name
+                    // 读取函数名
+                    fseek(fp, shdr.sh_offset + sym.st_name, SEEK_SET);
                     int ret4 = fread(func_name, 32, 1, fp);
                     assert(ret4 == 1);
                     // read function address
