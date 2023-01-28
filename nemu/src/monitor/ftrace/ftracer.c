@@ -5,7 +5,7 @@
 char *get_func_name(uint32_t addr) {
     for (int i = 0; i < func_num; ++i) {
         uint32_t start_addr = func_table[i].start_addr;
-        int size = func_table[i].size;
+        uint32_t size = func_table[i].size;
         if (addr >= start_addr && addr < start_addr + size) {
             return func_table[i].func_name;
         } 
