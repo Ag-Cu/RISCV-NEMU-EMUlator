@@ -129,9 +129,11 @@ void init_monitor(int argc, char *argv[]) {
 
   /* Initialize the simple debugger. */
   init_sdb();
-
+  
+  #ifdef CONFIG_FTRACE_COND
   /* Initialize ftracer. */
   init_ftracer(elf_file);
+  #endif
 
   IFDEF(CONFIG_ITRACE, init_disasm(
     MUXDEF(CONFIG_ISA_x86,     "i686",

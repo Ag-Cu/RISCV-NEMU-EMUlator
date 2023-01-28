@@ -18,8 +18,7 @@ FILE *read_file(const char *elf_file) {
 
 
 void init_elf(const char *elf_file) {
-    // TODO();
-    // Log("Initializing elf tables...");
+    Log("Initializing elf tables...");
     FILE *fp = read_file(elf_file);
     Elf64_Ehdr ehdr;                // elf header
     int ret1 = fread(&ehdr, sizeof(ehdr), 1, fp);
@@ -56,14 +55,6 @@ void init_elf(const char *elf_file) {
 
 
                 // 打印symbol table
-                printf("sym.st_name = %d, sym.st_info = %d, sym.st_other = %d, sym.st_shndx = %d, sym.st_value = %lx, sym.st_size = %ld\n",
-                        sym.st_name, sym.st_info, sym.st_other, sym.st_shndx, sym.st_value, sym.st_size);
-
-                if (ret3 != 1) {
-                    // 打印调试信息
-                    printf("j = %d, shdr.sh_size = %ld, sizeof(sym) = %ld, ret3 = %d\n", j, shdr.sh_size, sizeof(sym), ret3);
-                }
-
                 assert(ret3 == 1);
                 if (ELF64_ST_TYPE(sym.st_info) == STT_FUNC) {  // ELF64_ST_TYPE的作用是取出符号类型
                     // 记录当前文件指针的位置
@@ -89,13 +80,6 @@ void init_elf(const char *elf_file) {
             }
             func_num = i;
         }
-        // Log("Initializing elf tables...done");
     }
-
-    // print func_table
-    Log("func_num = %d", func_num);
-    for (int i = 0; i < func_num; i++) {
-        printf("func_table[%d]: addr = 0x%x, size = 0x%x, name = %s\n",
-                 i, func_table[i].start_addr, func_table[i].size, func_table[i].func_name);
-    }
+    Log("Initializing elf tables...done");
 }
