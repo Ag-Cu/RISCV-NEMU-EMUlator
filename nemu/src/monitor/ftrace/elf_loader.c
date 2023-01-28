@@ -26,9 +26,9 @@ void init_elf(const char *elf_file) {
     assert(ret1 == 1);
 
     // 打印elf header
-    printf("e_ident: %s, e_type: %d, e_machine: %d, e_version: %d, e_entry: %lx, e_phoff: %ld, e_shoff: %ld, e_flags: %d, e_ehsize: %d, e_phentsize: %d, e_phnum: %d, e_shentsize: %d, e_shnum: %d, e_shstrndx: %d\n",
-        ehdr.e_ident, ehdr.e_type, ehdr.e_machine, ehdr.e_version, ehdr.e_entry, ehdr.e_phoff, ehdr.e_shoff, ehdr.e_flags, ehdr.e_ehsize, ehdr.e_phentsize, ehdr.e_phnum, ehdr.e_shentsize, ehdr.e_shnum, ehdr.e_shstrndx);
-
+/*  printf("e_ident: %s, e_type: %d, e_machine: %d, e_version: %d, e_entry: %lx, e_phoff: %ld, e_shoff: %ld, e_flags: %d, e_ehsize: %d, e_phentsize: %d, e_phnum: %d, e_shentsize: %d, e_shnum: %d, e_shstrndx: %d\n",
+            ehdr.e_ident, ehdr.e_type, ehdr.e_machine, ehdr.e_version, ehdr.e_entry, ehdr.e_phoff, ehdr.e_shoff, ehdr.e_flags, ehdr.e_ehsize, ehdr.e_phentsize, ehdr.e_phnum, ehdr.e_shentsize, ehdr.e_shnum, ehdr.e_shstrndx);
+*/
     Elf64_Shdr shdr;                // section header
     fseek(fp, ehdr.e_shoff, SEEK_SET);
     
@@ -37,9 +37,9 @@ void init_elf(const char *elf_file) {
         int ret2 = fread(&shdr, sizeof(shdr), 1, fp);
         assert(ret2 == 1);
         // 打印section header
-        printf("sh_name: %d, sh_type: %d, sh_flags: %ld, sh_addr: %ld, sh_offset: %ld, sh_size: %ld, sh_link: %d, sh_info: %d, sh_addralign: %ld, sh_entsize: %ld\n",
-         shdr.sh_name, shdr.sh_type, shdr.sh_flags, shdr.sh_addr, shdr.sh_offset, shdr.sh_size, shdr.sh_link, shdr.sh_info, shdr.sh_addralign, shdr.sh_entsize);
-        if (shdr.sh_type == SHT_SYMTAB) {
+/*     printf("sh_name: %d, sh_type: %d, sh_flags: %ld, sh_addr: %ld, sh_offset: %ld, sh_size: %ld, sh_link: %d, sh_info: %d, sh_addralign: %ld, sh_entsize: %ld\n",
+                shdr.sh_name, shdr.sh_type, shdr.sh_flags, shdr.sh_addr, shdr.sh_offset, shdr.sh_size, shdr.sh_link, shdr.sh_info, shdr.sh_addralign, shdr.sh_entsize);
+*/      if (shdr.sh_type == SHT_SYMTAB) {
             // read symbol table
             Elf64_Sym sym;
             fseek(fp, shdr.sh_offset, SEEK_SET);        // move to symbol table
