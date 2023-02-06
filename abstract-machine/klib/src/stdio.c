@@ -67,7 +67,6 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       break;
     
     case 1: 
-      printf("fmt[i] = %c\n", fmt[i]);
       switch (fmt[i])
       {
       case 's':
