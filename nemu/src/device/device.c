@@ -16,9 +16,12 @@
 #include <common.h>
 #include <utils.h>
 #include <device/alarm.h>
+#include <memory/vaddr.h>
 #ifndef CONFIG_TARGET_AM
 #include <SDL2/SDL.h>
 #endif
+
+#define CONFIG_RTC_MMIO 0xa0000048
 
 void init_map();
 void init_serial();
@@ -36,11 +39,11 @@ void vga_update_screen();
 void device_update() {
   static uint64_t last = 0;
   uint64_t now = get_time();
+  vaddr_write(CONFIG_RTC_MMIO, 8, now);
   if (now - last < 1000000 / TIMER_HZ) {
     return;
   }
   last = now;
-
   IFDEF(CONFIG_HAS_VGA, vga_update_screen());
 
 #ifndef CONFIG_TARGET_AM
