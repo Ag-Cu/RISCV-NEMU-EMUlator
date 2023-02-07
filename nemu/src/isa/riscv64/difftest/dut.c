@@ -20,6 +20,8 @@
 bool isa_difftest_checkregs(CPU_state *ref_r, vaddr_t pc) {
   for (int i = 0; i < 32; i ++) {
     if (ref_r->gpr[i] != gpr(i)) {
+      Log("Diffset error at PC = 0x%016lx", pc);
+      Log("gpr[%d] should be 0x%016lx, but actually is 0x%016lx", i, ref_r->gpr[i], gpr(i));
       return false;
     }
   }
