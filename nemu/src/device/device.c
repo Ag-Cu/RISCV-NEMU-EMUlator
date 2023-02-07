@@ -39,9 +39,7 @@ void vga_update_screen();
 void device_update() {
   static uint64_t last = 0;
   uint64_t now = get_time();
-  printf("--> Start write to RTC\n");
   vaddr_write(CONFIG_RTC_MMIO, 8, now);
-  printf("--> End write to RTC\n");
   if (now - last < 1000000 / TIMER_HZ) {
     return;
   }
