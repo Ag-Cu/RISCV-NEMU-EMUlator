@@ -10,14 +10,20 @@
 
 #define append(x) {out[j++]=x; if (j >= n) {break;}}
 
+static int pos = 0;
+
+static void printchar(char *str, int c) {
+	if (str) {
+		*(str + (pos++)) = c;
+	}
+	else putch(c);
+}
+
 int printf(const char *fmt, ...) {
-  char buffer[2048];
   va_list arg;
   va_start (arg, fmt);
   
-  int done = vsprintf(buffer, fmt, arg);
-
-  putstr(buffer);
+  int done = vsprintf(NULL, fmt, arg);
 
   va_end(arg);
   return done;
@@ -50,7 +56,7 @@ int snprintf(char *out, size_t n, const char *fmt, ...) {
 #define PAD_RIGHT 1
 #define PAD_ZERO 2
 
-static int prints(const char *string, int width, int pad) {
+static int prints(char *out, const char *string, int width, int pad) {
   int pc = 0, padchar = ' ';
   if (width > 0) {
     int len = 0;
@@ -62,16 +68,16 @@ static int prints(const char *string, int width, int pad) {
   }
   if (!(pad & PAD_RIGHT)) {               // 如果不是右对齐
     for ( ; width > 0; --width) {
-      putch(padchar);
+      printchar(out, padchar);
       ++pc;
     }
   }
   for ( ; *string ; ++string) {
-    putch(*string);
+    printchar(out, *string);
     ++pc;
   }
   for ( ; width > 0; --width) {
-    putch(padchar);
+    printchar(out, padchar);
     ++pc;
   }
   return pc;
@@ -80,7 +86,7 @@ static int prints(const char *string, int width, int pad) {
 
 #define PRINT_BUF_LEN 12
 
-static int printi(int i, int b, int sg, int width, int pad, int letbase) {  
+static int printi(char *out, int i, int b, int sg, int width, int pad, int letbase) {  
   char print_buf[PRINT_BUF_LEN];    
   char *s;                          
   int t, neg = 0, pc = 0;           
@@ -88,7 +94,7 @@ static int printi(int i, int b, int sg, int width, int pad, int letbase) {
   if (i == 0) {
     print_buf[0] = '0';
     print_buf[1] = '\0';
-    return prints(print_buf, width, pad);
+    return prints(out, print_buf, width, pad);
   }
   if (sg && b == 10 && i < 0) {
     neg = 1;
@@ -105,7 +111,7 @@ static int printi(int i, int b, int sg, int width, int pad, int letbase) {
   }
   if (neg) {
     if( width && (pad & PAD_ZERO) ) {
-      putch('-');
+      printchar(out, '-');
       ++pc;
       --width;
     }
@@ -113,7 +119,7 @@ static int printi(int i, int b, int sg, int width, int pad, int letbase) {
       *--s = '-';
     }
   }
-  return pc + prints(s, width, pad);
+  return pc + prints(out, s, width, pad);
 }
 
 
@@ -148,46 +154,46 @@ int vsnprintf(char *out, size_t n, const char *fmt, va_list ap) {
       }
       if( *fmt == 's' ) {
         txt = va_arg(ap, char*);
-        pc += prints(txt ? txt : "(null)", width, pad);
+        pc += prints(out, txt ? txt : "(null)", width, pad);
         continue;
       }
       if( *fmt == 'd' ) {
         num = va_arg(ap, int);
-        pc += printi(num, 10, 1, width, pad, 'a');
+        pc += printi(out, num, 10, 1, width, pad, 'a');
         continue;
       }
       if( *fmt == 'x' ) {
         unum = va_arg(ap, unsigned int);
-        pc += printi(unum, 16, 0, width, pad, 'a');
+        pc += printi(out, unum, 16, 0, width, pad, 'a');
         continue;
       }
       if( *fmt == 'X' ) {
         unum = va_arg(ap, unsigned int);
-        pc += printi(unum, 16, 0, width, pad, 'A');
+        pc += printi(out, unum, 16, 0, width, pad, 'A');
         continue;
       }
       if( *fmt == 'u' ) {
         unum = va_arg(ap, unsigned int);
-        pc += printi(unum, 10, 0, width, pad, 'a');
+        pc += printi(out, unum, 10, 0, width, pad, 'a');
         continue;
       }
       if( *fmt == 'c' ) {
         cha = (char)va_arg(ap, int);
         scr[0] = cha;
         scr[1] = '\0';
-        pc += prints(scr, width, pad);
+        pc += prints(out, scr, width, pad);
         continue;
       }
       if( *fmt == 'p' ) {
         pointer = va_arg(ap, uint32_t);
-        pc += prints("0x", 0, pad);
-        pc += printi(pointer, 16, 0, width, pad, 'a');
+        pc += prints(out, "0x", 0, pad);
+        pc += printi(out, pointer, 16, 0, width, pad, 'a');
         continue;
       }
     }
     else {
     out:
-      putch(*fmt);
+      printchar(out, *fmt);
       ++pc;
     }
   }
