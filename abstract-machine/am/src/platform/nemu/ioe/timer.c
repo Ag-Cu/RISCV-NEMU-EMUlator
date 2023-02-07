@@ -2,14 +2,11 @@
 #include <nemu.h>
 #include "../../../riscv/riscv.h"
 
-// uint64_t boot_time = 0;
 
 void __am_timer_init() {
-  // ioe_read(AM_TIMER_UPTIME, &boot_time);
 }
 
 void __am_timer_uptime(AM_TIMER_UPTIME_T *uptime) {
-  // printf("%d \n", RTC_ADDR);
   uptime->us = ((uint64_t)inl(RTC_ADDR + 4) << 32) | (uint64_t)inl(RTC_ADDR);
 }
 
