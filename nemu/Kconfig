@@ -133,6 +133,10 @@ config FTRACE_COND
   bool "Enable function trace"
   default y
 
+config DTRACE_COND
+  bool "Enable device trace"
+  default y
+
 config BATCH_MODE
   bool "Batch mode"
   default y

@@ -37,7 +37,7 @@ void *malloc(size_t size) {
 // #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
 //   panic("Not implemented");
 // #endif
-  size = (size + 7) & ~7;
+  size = (size + 7) & ~7;   // 意思是size+7后，取反，然后再取反，这样就是8的倍数了
   if (hbrk == NULL) {
     hbrk = (char *)heap.start;
   }
