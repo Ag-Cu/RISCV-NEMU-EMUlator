@@ -37,17 +37,16 @@ void *malloc(size_t size) {
 // #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
 //   panic("Not implemented");
 // #endif
-
-  size  = (size_t)ROUNDUP(size, 8);
+  size = (size + 7) & ~7;
+  if (hbrk == NULL) {
+    hbrk = (char *)heap.start;
+  }
   char *old = hbrk;
   hbrk += size;
-  for (uint64_t *p = (uint64_t *)old; p != (uint64_t *)hbrk; p ++) {
-    *p = 0;
+  if (hbrk > (char *)heap.end) {
+    return NULL;
   }
   return old;
-  return NULL;
-  
-
 }
 
 void free(void *ptr) {
