@@ -82,6 +82,7 @@ void vga_update_screen() {
 void vgactl_io_handler(uint32_t offset, int len, bool is_write) {
   assert(offset == 0 || offset == 4);
   if (is_write && offset == 4) {
+    printf("Test here\n");
     if (vgactl_port_base[1] & 0x1){
       printf("Warning: vga sync register is not zero\n");
     }
