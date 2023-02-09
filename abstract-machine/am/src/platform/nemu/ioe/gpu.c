@@ -17,11 +17,11 @@ void __am_gpu_init() {
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
-
+  
   *cfg = (AM_GPU_CONFIG_T) {
     .present = true, .has_accel = false,
-    .width = io_read(AM_GPU_CONFIG).width, 
-    .height = io_read(AM_GPU_CONFIG).height,
+    .width = W, 
+    .height = H,
     .vmemsz = 0
   };
 }
