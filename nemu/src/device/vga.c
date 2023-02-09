@@ -79,22 +79,13 @@ void vga_update_screen() {
   }
 }
 
-void vgactl_io_handler(uint32_t offset, int len, bool is_write) {
-  assert(offset == 0 || offset == 4);
-  if (is_write && offset == 4) {
-    printf("Test here\n");
-    if (vgactl_port_base[1] & 0x1){
-    }
-  }
-}
-
 void init_vga() {
   vgactl_port_base = (uint32_t *)new_space(8);
   vgactl_port_base[0] = (screen_width() << 16) | screen_height();
 #ifdef CONFIG_HAS_PORT_IO
-  add_pio_map ("vgactl", CONFIG_VGA_CTL_PORT, vgactl_port_base, 8, vgactl_io_handler);
+  add_pio_map ("vgactl", CONFIG_VGA_CTL_PORT, vgactl_port_base, 8, NULL);
 #else
-  add_mmio_map("vgactl", CONFIG_VGA_CTL_MMIO, vgactl_port_base, 8, vgactl_io_handler);
+  add_mmio_map("vgactl", CONFIG_VGA_CTL_MMIO, vgactl_port_base, 8, NULL);
 #endif
 
   vmem = new_space(screen_size());
