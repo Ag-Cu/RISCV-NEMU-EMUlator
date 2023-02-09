@@ -80,6 +80,7 @@ void vga_update_screen() {
 }
 
 void vgactl_io_handler(uint32_t offset, int len, bool is_write) {
+  printf("Test here\n");
   assert(offset == 0 || offset == 4);
   if (is_write && offset == 4) {
     printf("Test here\n");
