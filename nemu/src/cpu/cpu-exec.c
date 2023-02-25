@@ -45,7 +45,7 @@ int ringbuf_count = 0;
 #endif
 
 CPU_state cpu = {};
-riscv64_CSR_state CSRs = {0, 0xa00001800, 0, 0};
+riscv64_CSR_state CSRs = {};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
