@@ -284,6 +284,7 @@ word_t isa_csrrs(word_t dest, word_t src1, word_t csr) {
       break;
     case 0x342:   // mcause
       t = CSRs.mcause;
+      printf("mcause: %lx\n", t);
       CSRs.mcause = src1 | t;
       break;
     case 0x300:   // mstatus
@@ -326,6 +327,8 @@ word_t isa_csrrw(word_t dest, word_t src1, word_t csr) {
   }
   return t;
 }
+
+// 342022f3的二进制表示为0011 0100 0010 0000 0010 0011 1111 0011
 
 void ecall_helper(Decode *s) {
   s->dnpc = isa_raise_intr(0, s->pc);
