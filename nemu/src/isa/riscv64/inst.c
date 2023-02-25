@@ -274,7 +274,7 @@ word_t div_divw(word_t src1, word_t src2) {
   return SEXT(divisor / dividend, 32);
 }
 
-// 30571073                  0011 0000 0101 0111 0001 0000 0111 0011
+
 word_t isa_csrrs(word_t dest, word_t src1, word_t csr) {
   word_t t = 0;
   switch (csr) {
