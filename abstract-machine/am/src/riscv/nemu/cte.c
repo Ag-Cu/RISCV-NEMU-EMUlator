@@ -5,10 +5,6 @@
 static Context* (*user_handler)(Event, Context*) = NULL;
 
 Context* __am_irq_handle(Context *c) {
-  // 输出结构体的内容
-  printf("mcause: %d\n", c->mcause);
-  printf("mepc: %d\n", c->mepc);
-  printf("mstatus: %d\n", c->mstatus);
 
   if (user_handler) {
     Event ev = {0};
