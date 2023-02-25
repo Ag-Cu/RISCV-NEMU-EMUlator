@@ -298,7 +298,7 @@ word_t isa_csrrs(word_t dest, word_t src1, word_t csr) {
       panic("Unkown csr!");
       break;
   }
-  printf("csr: %lx, t: %lx, src1: %lx, dest: %lx, mepc: %lx, mcause: %lx, mstatus: %lx, mtvec: %lx\n", csr, t, src1, dest, CSRs.mepc, CSRs.mcause, CSRs.mstatus, CSRs.mtvec);
+// printf("csr: %lx, t: %lx, src1: %lx, dest: %lx, mepc: %lx, mcause: %lx, mstatus: %lx, mtvec: %lx\n", csr, t, src1, dest, CSRs.mepc, CSRs.mcause, CSRs.mstatus, CSRs.mtvec);
   return t;
 }
 
