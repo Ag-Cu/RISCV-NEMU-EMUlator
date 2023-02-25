@@ -2,6 +2,8 @@
 #include <riscv/riscv.h>
 #include <klib.h>
 
+#define Machine_external_interrupt 11
+
 static Context* (*user_handler)(Event, Context*) = NULL;
 
 Context* __am_irq_handle(Context *c) {
@@ -9,6 +11,8 @@ Context* __am_irq_handle(Context *c) {
   if (user_handler) {
     Event ev = {0};
     switch (c->mcause) {
+      case Machine_external_interrupt:
+        ev.event = EVENT_YIELD; break;
       default: ev.event = EVENT_ERROR; break;
     }
 
