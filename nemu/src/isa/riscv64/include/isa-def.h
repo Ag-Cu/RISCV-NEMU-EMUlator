@@ -23,6 +23,13 @@ typedef struct {
   vaddr_t pc;
 } riscv64_CPU_state;
 
+typedef struct {
+  word_t mepc;
+  word_t mstatus;
+  word_t mcause;
+  word_t mtvec;
+} riscv64_CSR_state;
+
 // decode
 typedef struct {
   union {
