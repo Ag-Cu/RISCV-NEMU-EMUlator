@@ -137,6 +137,10 @@ config DTRACE_COND
   bool "Enable device trace"
   default y
 
+config ETRACE_COND
+  bool "Enable exception trace"
+  default y
+
 config BATCH_MODE
   bool "Batch mode"
   default y

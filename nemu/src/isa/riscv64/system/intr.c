@@ -17,6 +17,29 @@
 
 extern riscv64_CSR_state CSRs;
 
+char *isa_intr_name(uint32_t NO) {
+  static char *str[] = { "Reserved", 
+                         "Supervisor software interrupt", 
+                         "Virtual supervisor software interrupt",
+                          "Machine software interrupt",
+                          "Reserved",
+                          "Supervisor timer interrupt",
+                          "Virtual supervisor timer interrupt",
+                          "Machine timer interrupt",
+                          "Reserved",
+                          "Supervisor external interrupt",
+                          "Virtual supervisor external interrupt",
+                          "Machine External Interrupt",
+                          "Supervisor guest external interrupt",
+                          "Reserved",
+                          "Reserved",
+                           };
+  if (NO >= sizeof(str) / sizeof(str[0])) {
+    return "Designated for platform or custom use";
+  }
+  return str[NO];
+}
+
 word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   /* TODO: Trigger an interrupt/exception with ``NO''.
    * Then return the address of the interrupt/exception vector.
@@ -25,6 +48,11 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   CSRs.mepc = epc;
   CSRs.mcause = NO;
   vaddr_t mtvec = CSRs.mtvec;
+
+  // exception trace
+  #ifdef CONFIG_ETRACE_COND
+    printf("Exception: %s\n", isa_intr_name(NO));
+  #endif
   return mtvec;
 }
 

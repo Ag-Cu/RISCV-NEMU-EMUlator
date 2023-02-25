@@ -12,7 +12,11 @@ Context* __am_irq_handle(Context *c) {
     Event ev = {0};
     switch (c->mcause) {
       case Machine_external_interrupt:
-        ev.event = EVENT_YIELD; break;
+        if (c->GPR1 == -1) {
+          ev.event = EVENT_YIELD; break;
+        } else {
+          ev.event = EVENT_SYSCALL;
+        }
       default: ev.event = EVENT_ERROR; break;
     }
 
