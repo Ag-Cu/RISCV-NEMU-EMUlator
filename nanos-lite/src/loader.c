@@ -23,7 +23,7 @@ size_t get_ramdisk_size();
 static uintptr_t loader(PCB *pcb, const char *filename) {
   Elf_Ehdr elf;
   ramdisk_read(&elf, 0, sizeof(elf));
-
+  printf("elf.e_ident = %x", *(uint32_t *)elf.e_ident);
   assert(*(uint32_t *)elf.e_ident == 0x7f454c46);
   
   Elf_Phdr ph;
