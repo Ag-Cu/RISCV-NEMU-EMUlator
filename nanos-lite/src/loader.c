@@ -22,13 +22,16 @@ size_t get_ramdisk_size();
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
   Elf_Ehdr elf;
+  printf("1\n");
   ramdisk_read(&elf, 0, sizeof(elf));
   assert(*(uint32_t *)elf.e_ident == 0x464c457f);       // "\x7fELF" in little endian
   
   Elf_Phdr ph;
   for (int i = 0; i < elf.e_phnum; i++) {
+    printf("1\n");
     ramdisk_read(&ph, elf.e_phoff + i * sizeof(ph), sizeof(ph));
     if (ph.p_type == PT_LOAD) {
+      printf("1\n");
       ramdisk_read((void *)ph.p_vaddr, ph.p_offset, ph.p_memsz);
       memset((void *)(ph.p_vaddr + ph.p_filesz), 0, ph.p_memsz - ph.p_filesz);
     }
