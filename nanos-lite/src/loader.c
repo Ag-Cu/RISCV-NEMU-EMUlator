@@ -21,6 +21,7 @@ size_t get_ramdisk_size();
 
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
+  assert(get_ramdisk_size() > 0);
   Elf_Ehdr elf;
   printf("1\n");
   ramdisk_read(&elf, 0, sizeof(elf));
