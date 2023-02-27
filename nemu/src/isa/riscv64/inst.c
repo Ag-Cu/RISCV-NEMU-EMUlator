@@ -180,7 +180,7 @@ word_t jump_jal(int64_t imm, Decode *s, int dest) {
   int is_ret = -1;
   char *func_name = get_func_name(s->snpc - 4, s->dnpc, &is_ret);
   if (func_name) {
-    ftrace_info temp = {func_name, s->dnpc, 0, s->snpc - 4};
+    ftrace_info temp = {func_name, s->dnpc, 0, s->snpc - 4};    // call 
     call_ret_table[ftrace_index++] = temp;
   }
 
