@@ -189,7 +189,7 @@ word_t jump_jal(int64_t imm, Decode *s, int dest) {
 }
 
 word_t jump_jalr(int64_t imm, Decode *s, uint32_t src1, int dest) {
-  s->dnpc = (2 * imm + src1) & ~1;
+  s->dnpc = (2 * imm + src1) & (~1);
   #ifdef CONFIG_FTRACE_COND
   int is_ret = -1;
     char *func_name = get_func_name(s->snpc - 4, s->dnpc, &is_ret);
@@ -199,6 +199,7 @@ word_t jump_jalr(int64_t imm, Decode *s, uint32_t src1, int dest) {
       call_ret_table[ftrace_index++] = temp;
     }
   #endif
+  printf("FROM PC %02lx JALR to PC:%02lx\n",cpu.pc,s->dnpc);
   return s->snpc;
 }
 
