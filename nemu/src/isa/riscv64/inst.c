@@ -176,7 +176,7 @@ word_t register_addi(word_t imm, int idx) {
 }
 
 word_t jump_jal(int64_t imm, Decode *s, int dest) {
-  s->dnpc += 2 * imm - 4;
+  s->dnpc += imm - 4;
   #ifdef CONFIG_FTRACE_COND
   int is_ret = -1;
   char *func_name = get_func_name(s->snpc - 4, s->dnpc, &is_ret);
@@ -190,7 +190,7 @@ word_t jump_jal(int64_t imm, Decode *s, int dest) {
 }
 
 word_t jump_jalr(int64_t imm, Decode *s, uint32_t src1, int dest) {
-  s->dnpc = (2 * imm + src1) & (~1);
+  s->dnpc = (imm + src1) & (~1);
   #ifdef CONFIG_FTRACE_COND
   int is_ret = -1;
     char *func_name = get_func_name(s->snpc - 4, s->dnpc, &is_ret);
