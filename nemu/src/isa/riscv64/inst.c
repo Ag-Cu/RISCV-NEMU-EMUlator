@@ -79,6 +79,7 @@ static void decode_operand(Decode *s, int *dest, word_t *src1, word_t *src2, wor
 }
 
 static int decode_exec(Decode *s) {
+  printf("PC = 0x%lx", s->snpc);
   int dest = 0;
   word_t src1 = 0, src2 = 0, imm = 0;
   s->dnpc = s->snpc;
@@ -199,7 +200,7 @@ word_t jump_jalr(int64_t imm, Decode *s, uint32_t src1, int dest) {
       call_ret_table[ftrace_index++] = temp;
     }
   #endif
-  printf("FROM PC %02lx JALR to PC:%02lx\n",cpu.pc,s->dnpc);
+  // printf("FROM PC %02lx JALR to PC:%02lx\n",cpu.pc,s->dnpc);
   return s->snpc;
 }
 
