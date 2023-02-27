@@ -31,13 +31,14 @@ void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
 
 void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
   int x = ctl->x, y = ctl->y, w = ctl->w, h = ctl->h;
-  if (w == 0 || h == 0) return;
-  uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
-  uint32_t *pi = ctl->pixels;
-  int i, j;              
-  for (i = 0; i < h; i ++) {
-    for (j = 0; j < w; j ++) {
-      fb[(y + i) * W + x + j] = pi[i * w + j];
+  if (w != 0 && h != 0) {
+    uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
+    uint32_t *pi = ctl->pixels;
+    int i, j;              
+    for (i = 0; i < h; i ++) {
+      for (j = 0; j < w; j ++) {
+        fb[(y + i) * W + x + j] = pi[i * w + j];
+      }
     }
   }
   if (ctl->sync) {
