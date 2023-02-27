@@ -79,7 +79,7 @@ static void decode_operand(Decode *s, int *dest, word_t *src1, word_t *src2, wor
 }
 
 static int decode_exec(Decode *s) {
-  assert(cpu.pc != 0x83000498);
+  assert(cpu.pc != 0x83000120);
   int dest = 0;
   word_t src1 = 0, src2 = 0, imm = 0;
   s->dnpc = s->snpc;
