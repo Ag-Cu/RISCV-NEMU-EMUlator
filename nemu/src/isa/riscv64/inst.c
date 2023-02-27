@@ -180,7 +180,7 @@ word_t jump_jal(int64_t imm, Decode *s, int dest) {
   int is_ret = -1;
   char *func_name = get_func_name(s->snpc - 4, s->dnpc, &is_ret);
   if (func_name) {
-    ftrace_info temp = {func_name, s->dnpc, 0, s->snpc - 4};    // call 
+    ftrace_info temp = {func_name, s->dnpc, is_ret, s->snpc - 4};
     call_ret_table[ftrace_index++] = temp;
   }
 
@@ -195,7 +195,7 @@ word_t jump_jalr(int64_t imm, Decode *s, uint32_t src1, int dest) {
     char *func_name = get_func_name(s->snpc - 4, s->dnpc, &is_ret);
     if (func_name) {
       assert(is_ret != -1);
-      ftrace_info temp = {func_name, s->dnpc, 1, s->snpc - 4};
+      ftrace_info temp = {func_name, s->dnpc, is_ret, s->snpc - 4};
       call_ret_table[ftrace_index++] = temp;
     }
   #endif
@@ -330,5 +330,7 @@ word_t isa_csrrw(word_t dest, word_t src1, word_t csr) {
 
 
 void ecall_helper(Decode *s) {
+
+  // 异常代码NO的值到哪里去获得？？？？
   s->dnpc = isa_raise_intr(0xb, s->pc);
 }
