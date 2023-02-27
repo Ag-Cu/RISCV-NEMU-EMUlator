@@ -328,11 +328,7 @@ word_t isa_csrrw(word_t dest, word_t src1, word_t csr) {
   return t;
 }
 
-// 342022f3的二进制表示为0011 0100 0010 0000 0010 0011 1111 0011
 
 void ecall_helper(Decode *s) {
-
-  // 异常代码NO的值到哪里去获得？？？？
   s->dnpc = isa_raise_intr(0xb, s->pc);
 }
-
