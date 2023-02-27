@@ -16,7 +16,7 @@ Context* __am_irq_handle(Context *c) {
       case 8:
       case Machine_external_interrupt:
         if (c->GPR1 == -1) {
-          ev.event = EVENT_YIELD; break;
+          ev.event = EVENT_YIELD;
         } else {
           ev.event = EVENT_SYSCALL;
         }
