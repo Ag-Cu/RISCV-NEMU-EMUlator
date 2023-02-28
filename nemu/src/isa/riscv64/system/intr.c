@@ -50,7 +50,6 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
   // exception trace
   #ifdef CONFIG_ETRACE_COND
     printf("------> Exception: %s\n", isa_intr_name(NO));
-    printf("------> mepc = %lx\n", CSRs.mepc);
   #endif
 
   return CSRs.mtvec;
