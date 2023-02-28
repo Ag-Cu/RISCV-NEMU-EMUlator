@@ -52,7 +52,7 @@ size_t fs_write(int fd, void *buf, size_t len) {
   for (size_t i = 0; i < len; i ++) {
     putch(((char *)buf)[i]);
   }
-  return len;
+  return 0;
 }
 
 
