@@ -50,7 +50,7 @@ void do_syscall(Context *c) {
 int fs_write(int fd, void *buf, size_t len) {
   assert(fd == 1 || fd == 2);
   if (len == 0) return 0;
-  int i = -1;
+  int i = 0;
   char *p = buf;
   for (; i < len; ++i) {
     putch(p[i]);
