@@ -49,7 +49,6 @@ void do_syscall(Context *c) {
 
 size_t fs_write(int fd, void *buf, size_t len) {
   assert(fd == 1 || fd == 2);
-  yield();
   for (size_t i = 0; i < len; i ++) {
     putch(((char *)buf)[i]);
   }
