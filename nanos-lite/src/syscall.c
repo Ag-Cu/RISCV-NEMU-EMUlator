@@ -1,8 +1,6 @@
 #include <common.h>
 #include "syscall.h"
 
-#define SYS_yield 1
-
 char *sysnames[] = {
   "SYS_exit",
   "SYS_yield",
@@ -26,6 +24,8 @@ char *sysnames[] = {
   "SYS_gettimeofday"
 };
 
+int fs_write(int fd, void *buf, size_t len);
+
 
 void do_syscall(Context *c) {
   uintptr_t a[4];
@@ -40,9 +40,22 @@ void do_syscall(Context *c) {
   switch (a[0]) {
     case SYS_yield: yield(); c->GPRx = 0; break;
     case SYS_exit: halt(a[1]); break;
+    case SYS_write: c->GPRx = fs_write(a[1], (void *)a[2], a[3]); break;
 
     default: panic("Unhandled syscall ID = %d", a[0]);
   }
+}
+
+
+int fs_write(int fd, void *buf, size_t len) {
+  assert(fd == 1 || fd == 2);
+  if (len == 0) return 0;
+  int i = -1;
+  char *p = buf;
+  for (; i < len; ++i) {
+    putch(p[i]);
+  }
+  return i;
 }
 
 
