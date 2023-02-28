@@ -336,5 +336,5 @@ void ecall_helper(Decode *s) {
 
   // 异常代码NO的值到哪里去获得？？？？
   s->dnpc = isa_raise_intr(0xb, cpu.pc);
-//   printf("ECALL from PC %02lx to PC:%02lx\n", cpu.pc, s->dnpc);
+  printf("ECALL from PC %02lx to PC:%02lx\n", cpu.pc, s->dnpc);
 }
