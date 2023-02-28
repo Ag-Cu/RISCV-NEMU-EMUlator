@@ -24,7 +24,7 @@ char *sysnames[] = {
   "SYS_gettimeofday"
 };
 
-int fs_write(int fd, void *buf, size_t len);
+size_t fs_write(int fd, void *buf, size_t len);
 
 
 void do_syscall(Context *c) {
@@ -47,15 +47,12 @@ void do_syscall(Context *c) {
 }
 
 
-int fs_write(int fd, void *buf, size_t len) {
+size_t fs_write(int fd, void *buf, size_t len) {
   assert(fd == 1 || fd == 2);
-  if (len == 0) return 0;
-  int i = 0;
-  char *p = buf;
-  for (; i < len; ++i) {
-    putch(p[i]);
+  for (size_t i = 0; i < len; i ++) {
+    putch(((char *)buf)[i]);
   }
-  return 10;
+  return len;
 }
 
 
