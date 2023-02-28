@@ -19,6 +19,7 @@ Context* __am_irq_handle(Context *c) {
           ev.event = EVENT_SYSCALL;
         }
         c->mepc += 4;     // skip the instruction that caused the trap
+        printf("PC += 4");
         break;
       default: ev.event = EVENT_ERROR; break;
     }
