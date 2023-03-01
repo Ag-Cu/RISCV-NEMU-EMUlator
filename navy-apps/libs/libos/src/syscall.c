@@ -81,7 +81,7 @@ void *_sbrk(intptr_t increment) {
     return (void *)old_heap_end;
   }
   char *buf = "?????????\n";
-  _write(1, buf, 10);
+  _write(0, buf, 10);
   return (void *)-1;
 }
 
