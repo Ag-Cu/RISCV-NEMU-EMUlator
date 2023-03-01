@@ -68,6 +68,7 @@ int _write(int fd, void *buf, size_t count) {
 }
 
 void *_sbrk(intptr_t increment) {
+  assert(0);
   static intptr_t heap_end = 0;
   if (heap_end == 0) {
     heap_end = (intptr_t)&_end;
