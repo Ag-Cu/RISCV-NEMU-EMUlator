@@ -77,6 +77,7 @@ void *_sbrk(intptr_t increment) {
   intptr_t new_heap_end = heap_end + increment;
   intptr_t ret = _syscall_(SYS_brk, new_heap_end, 0, 0);
   if (ret == 0) {
+    assert(0);
     heap_end = new_heap_end;
     return (void *)old_heap_end;
   }
