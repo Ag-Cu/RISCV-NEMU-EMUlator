@@ -80,8 +80,7 @@ void *_sbrk(intptr_t increment) {
     heap_end = new_heap_end;
     return (void *)old_heap_end;
   }
-  char *buf = "?????????\n";
-  _write(0, buf, 10);
+  assert(0);
   return (void *)-1;
 }
 
