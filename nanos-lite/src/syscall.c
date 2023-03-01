@@ -38,12 +38,22 @@ void do_syscall(Context *c) {
   // printf("Syscall %s(%d, %d, %d, %d) at epc = 0x%x\n", sysnames[a[0]], a[0], a[1], a[2], a[3], c->mepc);
 
   switch (a[0]) {
-    case SYS_yield: yield(); c->GPRx = 0; break;
-    case SYS_exit: halt(a[1]); break;
-    case SYS_write: c->GPRx = fs_write(a[1], (void *)a[2], a[3]); break;
-
-    default: panic("Unhandled syscall ID = %d", a[0]);
-  }
+    case SYS_yield: 
+        yield(); 
+        c->GPRx = 0; 
+        break;
+    case SYS_exit: 
+        halt(a[1]); 
+        break;
+    case SYS_write: 
+        c->GPRx = fs_write(a[1], (void *)a[2], a[3]); 
+        break;
+    case SYS_brk: 
+        c->GPRx = 0;
+        break;
+    default: 
+        panic("Unhandled syscall ID = %d", a[0]);
+}
 }
 
 
