@@ -73,13 +73,12 @@ void *_sbrk(intptr_t increment) {
     heap_end = (intptr_t)&_end;
     _syscall_(SYS_brk, heap_end, 0, 0);
   }
-  if (increment == 0) {
-    return (void *)heap_end;
-  }
   intptr_t old_heap_end = heap_end;
   intptr_t new_heap_end = heap_end + increment;
   intptr_t ret = _syscall_(SYS_brk, new_heap_end, 0, 0);
   if (ret == 0) {
+    char *buf = "Hit there\n";
+    _write(1, buf, 10);
     heap_end = new_heap_end;
     return (void *)old_heap_end;
   }
