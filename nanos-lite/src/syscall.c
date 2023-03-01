@@ -35,7 +35,7 @@ void do_syscall(Context *c) {
   a[3] = c->GPR4;
 
   // strace
-  // printf("Syscall %s(%d, %d, %d, %d) at epc = 0x%x\n", sysnames[a[0]], a[0], a[1], a[2], a[3], c->mepc);
+  printf("Syscall %s(%d, %d, %d, %d) at epc = 0x%x\n", sysnames[a[0]], a[0], a[1], a[2], a[3], c->mepc);
 
   switch (a[0]) {
     case SYS_yield: 
@@ -58,12 +58,12 @@ void do_syscall(Context *c) {
 
 
 size_t fs_write(int fd, void *buf, size_t len) {
+  
   assert(fd == 1 || fd == 2);
   if (len == 0) { return 0; }
   if (buf == NULL) { return 0; }
   for (size_t i = 0; i < len; i ++) {
     if (((char *)buf)[i] == 0) { return i; }
-    Log("output: %c", ((char *)buf)[i]);
     putch(((char *)buf)[i]);
   }
   return len;
