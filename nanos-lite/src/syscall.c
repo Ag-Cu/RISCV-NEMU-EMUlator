@@ -59,7 +59,7 @@ void do_syscall(Context *c) {
 
 size_t fs_write(int fd, void *buf, size_t len) {
 
-  Log("fs_write: fd = %d, buf = %s, len = %d", fd, buf, len);
+  // Log("fs_write: fd = %d, buf = %s, len = %d", fd, buf, len);
   
   assert(fd == 1 || fd == 2);
   if (len == 0) { return 0; }
