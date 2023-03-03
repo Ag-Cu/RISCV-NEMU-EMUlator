@@ -16,8 +16,8 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
   assert(get_ramdisk_size() > 0);
   int fd = fs_open(filename, 0, 0);
   Elf_Ehdr elf;
-  fs_lseek(fd, 0, SEEK_SET);
   fs_read(fd, &elf, sizeof(elf));
+  Log("magic = %x", *(uint32_t *)elf.e_ident);
   assert(*(uint32_t *)elf.e_ident == 0x464c457f);       // "\x7fELF" in little endian
   
   Elf_Phdr ph;
@@ -25,11 +25,11 @@ static uintptr_t loader(PCB *pcb, const char *filename) {
     fs_lseek(fd, elf.e_phoff + i * sizeof(ph), SEEK_SET);
     fs_read(fd, &ph, sizeof(ph));
     if (ph.p_type == PT_LOAD) {
+      Log("ph.p_vaddr = 0x%08x ph.p_offset = 0x%08x ph.p_filesz = 0x%08x", ph.p_vaddr, ph.p_offset, ph.p_filesz);
       ramdisk_read((void *)ph.p_vaddr, ph.p_offset, ph.p_filesz);
       memset((void *)(ph.p_vaddr + ph.p_filesz), 0, ph.p_memsz - ph.p_filesz);
     }
   }
-  
   return elf.e_entry;
 }
 
