@@ -102,7 +102,7 @@ size_t fs_write(int fd, const void *buf, size_t len) {
     return ret;
 }
 
-size_t fs_lseek(int fd, int offset, int whence) {
+size_t fs_lseek(int fd, off_t offset, int whence) {
   assert(fd >= 0 && fd < sizeof(file_table) / sizeof(Finfo));
 
   Finfo *f = &file_table[fd];
