@@ -62,7 +62,8 @@ enum {
 #define immS() do { *imm = (SEXT(BITS(i, 31, 25), 7) << 5) | BITS(i, 11, 7); } while(0)
 // #define immJ() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 19) | (BITS(i, 19, 12) << 11) | (BITS(i, 20, 20) << 10) | (BITS(i, 30, 21)); } while(0)
 #define immJ() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 20) | (BITS(i, 30,21) << 1) |(BITS(i,20,20) << 11) |(BITS(i,19,12)<<12);} while(0)
-#define immB() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 11) | (BITS(i, 7, 7) << 10) | (BITS(i, 30, 25) << 4) | (BITS(i, 11, 8)); } while(0)
+// #define immB() do { *imm = (SEXT(BITS(i, 31, 31), 1) << 11) | (BITS(i, 7, 7) << 10) | (BITS(i, 30, 25) << 4) | (BITS(i, 11, 8)); } while(0)
+#define immB() do {*imm = (SEXT(BITS(i,31,31),1)<<12)| ((BITS(i, 11,8))<<1)|((BITS(i,7,7))<<11)|((BITS(i,30,25))<<5);} while(0)
 static void decode_operand(Decode *s, int *dest, word_t *src1, word_t *src2, word_t *imm, int type) {
   uint32_t i = s->isa.inst.val;
   int rd  = BITS(i, 11, 7);
@@ -235,32 +236,32 @@ void branch(word_t src1, word_t src2, uint64_t imm, Decode *s, int type) {
   switch (type) {
     case Beq: 
       if (src1 == src2) {
-        s->dnpc += 2 * imm - 4;
+        s->dnpc += imm - 4;
       }
       break;
     case Bne:
       if (src1 != src2) {
-        s->dnpc += 2 * imm - 4;
+        s->dnpc += imm - 4;
       }
       break;
     case Bge:
       if ((int64_t)src1 >= (int64_t)src2) {
-        s->dnpc += 2 * imm - 4;
+        s->dnpc += imm - 4;
       }
       break;
     case Blt:
       if ((int64_t)src1 < (int64_t)src2) {
-        s->dnpc += 2 * imm - 4;
+        s->dnpc += imm - 4;
       }
       break;
     case Bltu:
       if (src1 < src2) {
-        s->dnpc += 2 * imm - 4;
+        s->dnpc += imm - 4;
       }
       break;
     case Bgeu:
       if (src1 >= src2) {
-        s->dnpc += 2 * imm - 4;
+        s->dnpc += imm - 4;
       }
       break;
     default:
