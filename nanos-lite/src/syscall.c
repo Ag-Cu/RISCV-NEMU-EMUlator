@@ -57,18 +57,3 @@ void do_syscall(Context *c) {
 }
 
 
-size_t fs_write(int fd, void *buf, size_t len) {
-
-  Log("fs_write: fd = %d, buf = %s, len = %d", fd, buf, len);
-  
-  assert(fd == 1 || fd == 2);
-  if (len == 0) { return 0; }
-  if (buf == NULL) { return 0; }
-  for (size_t i = 0; i < len; i ++) {
-    if (((char *)buf)[i] == 0) { return i; }
-    putch(((char *)buf)[i]);
-  }
-  return len;
-}
-
-

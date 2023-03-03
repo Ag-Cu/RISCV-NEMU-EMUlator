@@ -1,5 +1,6 @@
 #include <proc.h>
 #include <elf.h>
+#include <fs.h>
 
 #ifdef __LP64__
 # define Elf_Ehdr Elf64_Ehdr
@@ -9,23 +10,20 @@
 # define Elf_Phdr Elf32_Phdr
 #endif
 
-// 从ramdisk中`offset`偏移处的`len`字节读入到`buf`中
-size_t ramdisk_read(void *buf, size_t offset, size_t len);
-
-// 返回ramdisk的大小, 单位为字节
-size_t get_ramdisk_size();
-
 
 
 static uintptr_t loader(PCB *pcb, const char *filename) {
   assert(get_ramdisk_size() > 0);
+  int fd = fs_open(filename, 0, 0);
   Elf_Ehdr elf;
-  ramdisk_read(&elf, 0, sizeof(elf));
+  fs_lseek(fd, 0, SEEK_SET);
+  fs_read(fd, &elf, sizeof(elf));
   assert(*(uint32_t *)elf.e_ident == 0x464c457f);       // "\x7fELF" in little endian
   
   Elf_Phdr ph;
   for (int i = 0; i < elf.e_phnum; i++) {
-    ramdisk_read(&ph, elf.e_phoff + i * sizeof(ph), sizeof(ph));
+    fs_lseek(fd, elf.e_phoff + i * sizeof(ph), SEEK_SET);
+    fs_read(fd, &ph, sizeof(ph));
     if (ph.p_type == PT_LOAD) {
       ramdisk_read((void *)ph.p_vaddr, ph.p_offset, ph.p_filesz);
       memset((void *)(ph.p_vaddr + ph.p_filesz), 0, ph.p_memsz - ph.p_filesz);
