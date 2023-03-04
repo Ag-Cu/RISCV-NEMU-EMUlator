@@ -7,7 +7,8 @@
 #include <sys/time.h>
 
 static int evtdev = 3;   // pa3 modify to 3
-static int fbdev = -1;
+static int dispinfo_dev = 4;
+static int fbdev = 5;
 static int screen_w = 0, screen_h = 0;
 
 typedef struct size
@@ -100,7 +101,6 @@ int NDL_Init(uint32_t flags) {
   printf("NDL_Init, disp_size.w=%d, disp_size.h=%d\n", disp_size.w, disp_size.h);
   assert(disp_size.w >= 400 && disp_size.w <= 800);
   assert(disp_size.h >= 300 && disp_size.h <= 640);
-  printf("W:%d\tH:%d\t",disp_size.w,disp_size.h);
   // fclose(fp);
   return 0;
 }
