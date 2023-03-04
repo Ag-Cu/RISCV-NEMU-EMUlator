@@ -22,7 +22,7 @@ uint32_t NDL_GetTicks() {
 int NDL_PollEvent(char *buf, int len) {
   buf[0]='\0';
   assert(evtdev!=-1);
-  printf("evtdev=%d\n",evtdev);
+  // printf("evtdev=%d\n",evtdev);
   // fd
   int ret=read(evtdev,buf,len);
   if (ret == -1) {
