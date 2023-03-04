@@ -66,7 +66,9 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
   assert(w > 0 && w <= disp_size.w);
   assert(h > 0 && h <= disp_size.h);
 
-
+  // 重新设置x，y的值以居中显示
+  x = (disp_size.w - w) / 2;
+  y = (disp_size.h - h) / 2;
   for (size_t row = 0; row < h; ++row)
   {
     lseek(fbdev, x + (y + row) * disp_size.w, SEEK_SET);
