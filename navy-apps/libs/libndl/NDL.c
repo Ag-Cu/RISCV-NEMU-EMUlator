@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <sys/time.h>
 
-static int evtdev = -1;
+static int evtdev = 3;   // pa3 modify to 3
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
 
@@ -75,7 +75,7 @@ int NDL_QueryAudio() {
 }
 
 int NDL_Init(uint32_t flags) {
-  printf("NDL_Init, MWM_APP=%s", getenv("NWM_APP"));
+  // printf("NDL_Init, MWM_APP=%s", getenv("NWM_APP"));
   if (getenv("NWM_APP")) {
     evtdev = 3;
   }
