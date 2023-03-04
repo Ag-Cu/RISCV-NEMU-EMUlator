@@ -1,19 +1,25 @@
 #include <stdio.h>
 #include <sys/time.h>
 
+typedef unsigned int uint32_t;
+
+uint32_t NDL_GetTicks() {
+  // 以毫秒为单位返回系统时间
+  struct timeval tv;
+  struct timezone tz;
+  gettimeofday(&tv, &tz);
+  return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+}
+
+
 int main() {
-  // 通过gettimeofday()获取当前时间, 并每过0.5秒输出一句话.
-    struct timeval tv;
-    struct timezone tz;
-    gettimeofday(&tv, &tz);
-    int old_sec = tv.tv_sec;
-    int old_usec = tv.tv_usec;
+    uint32_t old_msec = NDL_GetTicks();
+    int i = 1;
     while (1) {
-        gettimeofday(&tv, &tz);
-        if (tv.tv_sec != old_sec || tv.tv_usec - old_usec >= 500000) {
-            printf("tv_sec = %ld, tv_usec = %ld, tz_minuteswest = %d, tz_dsttime = %d\n", tv.tv_sec, tv.tv_usec, tz.tz_minuteswest, tz.tz_dsttime);
-            old_sec = tv.tv_sec;
-            old_usec = tv.tv_usec;
+        uint32_t now_msec = NDL_GetTicks();
+        if (now_msec != old_msec && now_msec - old_msec >= 500) {
+            printf("Hello World from Navy-apps for the %dth time!\n", i++);
+            old_msec = now_msec;
         }
     }
   return 0;
