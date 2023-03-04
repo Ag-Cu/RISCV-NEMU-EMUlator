@@ -53,6 +53,7 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
   strcat(buf, "\nHEIGHT:");
   strcat(buf, itoa(height, num));
   strcat(buf, "\n");
+  printf("dispinfo_read: %s", buf);
   return strlen((char *)buf);
 }
 
