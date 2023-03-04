@@ -60,8 +60,12 @@ void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
     w = disp_size.w;
     h = disp_size.h;
   }
+  printf("NDL_DrawRect, x=%d, y=%d, w=%d, h=%d\n", x, y, w, h);
+
   assert(w > 0 && w <= disp_size.w);
   assert(h > 0 && h <= disp_size.h);
+
+
   for (size_t row = 0; row < h; ++row)
   {
     lseek(fbdev, x + (y + row) * disp_size.w, SEEK_SET);
