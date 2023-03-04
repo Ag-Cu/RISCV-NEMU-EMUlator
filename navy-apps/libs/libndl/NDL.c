@@ -31,8 +31,7 @@ int NDL_PollEvent(char *buf, int len) {
       // some other error, let's just close
       // the file descriptor and return error
       close(evtdev);
-      evtdev = -1;
-      return -1;
+      return 0;
     }
   return ret;
 }
