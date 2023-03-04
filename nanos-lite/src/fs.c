@@ -57,7 +57,7 @@ size_t fs_read(int fd, void *buf, size_t len) {
 
   Finfo *f = &file_table[fd];
 
-  if (fd == FD_STDIN) {
+  if (fd == FD_STDIN || fd == FD_FB) {
     return f->read(buf, 0, len);
   }
 
