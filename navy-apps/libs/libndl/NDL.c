@@ -27,12 +27,7 @@ int NDL_PollEvent(char *buf, int len) {
   if (ret == -1) {
       // no data to read, just return
       return 0;
-    } else {
-      // some other error, let's just close
-      // the file descriptor and return error
-      close(evtdev);
-      return 0;
-    }
+  }
   return ret;
 }
 
