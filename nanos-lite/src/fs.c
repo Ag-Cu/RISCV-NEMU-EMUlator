@@ -42,11 +42,6 @@ static Finfo file_table[] __attribute__((used)) = {
 
 void init_fs() {
   // TODO: initialize the `read` and `write` field of `file_table`
-  for (int i = 3; i < sizeof(file_table) / sizeof(Finfo); ++i) {
-    file_table[i].read = ramdisk_read;
-    file_table[i].write = ramdisk_write;
-  }
-
   // TODO: initialize the size of /dev/fb
 }
 
@@ -77,7 +72,11 @@ size_t fs_read(int fd, void *buf, size_t len) {
 
   size_t offset = f->disk_offset + f->open_offset;
   f->open_offset += len;
-  return f->read(buf, offset, len);
+  if (f->read == NULL) {
+    return ramdisk_read(buf, offset, len);
+  } else {
+    return f->read(buf, offset, len);
+  }
 }
 
 size_t fs_write(int fd, const void *buf, size_t len) {
@@ -89,17 +88,18 @@ size_t fs_write(int fd, const void *buf, size_t len) {
         return f->write(buf, 0, len);
     }
 
-
     if (len == 0) return 0;
     if (f->open_offset >= f->size) return 0;
 
     if (len + f->open_offset > f->size) len = f->size - f->open_offset;
 
     size_t offset = f->disk_offset + f->open_offset;
-
-    size_t ret = f->write(buf, offset, len);
     f->open_offset += len;
-    return ret;
+    if (f->write == NULL) {
+        return ramdisk_write(buf, offset, len);
+    } else {
+        return f->write(buf, offset, len);
+    }
 }
 
 size_t fs_lseek(int fd, off_t offset, int whence) {
