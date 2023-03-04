@@ -3,20 +3,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <assert.h>
+#include <sys/time.h>
 
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
 
-struct timeval{
-  long int tv_sec;
-  long int tv_usec;
-}tv;
-
-struct timezone{
-  int tz_minuteswest;
-  int tz_dsttime;
-}tz;
 
 uint32_t NDL_GetTicks() {
   // 以毫秒为单位返回系统时间
@@ -27,7 +20,21 @@ uint32_t NDL_GetTicks() {
 }
 
 int NDL_PollEvent(char *buf, int len) {
-  return 0;
+  buf[0]='\0';
+  assert(evtdev!=-1);
+  // fd
+  int ret=read(evtdev,buf,len);
+  if (ret == -1) {
+      // no data to read, just return
+      return 0;
+    } else {
+      // some other error, let's just close
+      // the file descriptor and return error
+      close(evtdev);
+      evtdev = -1;
+      return -1;
+    }
+  return ret;
 }
 
 void NDL_OpenCanvas(int *w, int *h) {
