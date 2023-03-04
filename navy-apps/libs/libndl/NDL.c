@@ -96,6 +96,8 @@ int NDL_Init(uint32_t flags) {
 
   FILE *fp = fopen("/proc/dispinfo", "r");
   fscanf(fp, "WIDTH:%d\nHEIGHT:%d\n", &disp_size.w, &disp_size.h);
+
+  printf("NDL_Init, disp_size.w=%d, disp_size.h=%d\n", disp_size.w, disp_size.h);
   assert(disp_size.w >= 400 && disp_size.w <= 800);
   assert(disp_size.h >= 300 && disp_size.h <= 640);
   printf("W:%d\tH:%d\t",disp_size.w,disp_size.h);
