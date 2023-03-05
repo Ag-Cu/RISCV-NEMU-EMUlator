@@ -19,6 +19,7 @@ int NDL_PlayAudio(void *buf, int len);
 int NDL_QueryAudio();
 
 #define panic(format,...) {printf("\e[1;35m[%s, %d, %s] \e[0m " format "\n",__FILE__, __LINE__,__func__, ## __VA_ARGS__); assert(0);}while(0)
+#define todo() {printf("Not implemented: %s, %d, %s", __FILE__, __LINE__, __func__); }while(0)
 
 #ifdef __cplusplus
 }
