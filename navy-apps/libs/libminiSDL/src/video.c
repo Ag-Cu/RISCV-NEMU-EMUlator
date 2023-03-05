@@ -12,44 +12,54 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
 }
 
+//update the rectangle of the surface
 void SDL_UpdateRect(SDL_Surface *s, int x, int y, int w, int h) {
   assert(s);
-  // if (s->flags & SDL_HWSURFACE) {
-  //   NDL_DrawRect((uint32_t *)s->pixels, x, y, w, h);
-  // }
-  if (w == 0 && h == 0)
-  {
+  //if the width and height are both 0, then set them to the screen width and height
+  if (w == 0 && h == 0) {
     w = s->w;
     h = s->h;
   }
 
+  //calculate the length of the rectangle, and allocate the memory for it
   uint32_t len = w * h;
   uint32_t *buf = malloc(sizeof(uint32_t) * len);
+  //calculate the starting position (in pixels)
   uint32_t start_pos = x + y * s->w;
   uint32_t i = 0;
+  //loop through the rows of the rectangle
   for (size_t row = 0; row < h; ++row)
   {
+    //loop through the columns of the rectangle
     for (size_t col = 0; col < w; ++col)
     {
+      //calculate the offset (in pixels)
       uint32_t offset = col + row * s->w;
+      //if the screen is 32 bits per pixel
       if (s->format->BitsPerPixel == 32)
       {
-        // important: s->pixels is 8 bit!!! r g b a r g b a...
-        //            also, NDL_DrawRect buf should be a r g b a r g b....
+        //set the start position to the offset in the array of pixels
         s->pixels[start_pos + offset];
+        //add the color to the buffer
         buf[i++] = s->pixels[start_pos + 4 * offset + 3] << 24 | s->pixels[start_pos + 4 * offset + 2] << 16 | s->pixels[start_pos + 4 * offset + 1] << 8 | s->pixels[start_pos + 4 * offset];
       }
+      //if the screen is 8 bits per pixel
       else if (s->format->BitsPerPixel == 8)
       {
+        //set the color to the rgb values of the color at the offset in the pixel array
         SDL_Color rgba_color = s->format->palette->colors[s->pixels[start_pos + offset]];
+        //add the color to the buffer
         buf[i++] = rgba_color.a << 24 | rgba_color.r << 16 | rgba_color.g << 8 | rgba_color.b;
       }
+      //if the screen is neither 8 or 32 bits per pixel
       else
         panic("unsupported pixel bites %d!\n", s->format->BitsPerPixel);
     }
   }
 
+  //draw the rectangle to the screen
   NDL_DrawRect(buf, x, y, w, h);
+  //free the memory for the buffer
   free(buf);
 }
 
