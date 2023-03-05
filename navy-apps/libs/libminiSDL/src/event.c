@@ -21,6 +21,7 @@ int SDL_PushEvent(SDL_Event *ev) {
 
 int SDL_PollEvent(SDL_Event *ev) {
   #define BUF_LEN 16
+  // 16 is the max length of the string representing a key event
   char buf[BUF_LEN];
   memset(buf,0,BUF_LEN);
   
@@ -40,13 +41,13 @@ int SDL_PollEvent(SDL_Event *ev) {
   return 1;
 }
 
+/* Wait for an event and store it in the event structure */
 int SDL_WaitEvent(SDL_Event *event) {
   #define BUF_LEN 16
   char buf[BUF_LEN];
   memset(buf,0,BUF_LEN);
   
   while(NDL_PollEvent(buf, BUF_LEN) == 0){};
-  // printf("event is %s in SDL\n", buf);
   if(strncmp(buf, "kd", 2) == 0 ) 
     event->type = SDL_KEYDOWN;
   else if(strncmp(buf, "ku", 2) == 0) 
