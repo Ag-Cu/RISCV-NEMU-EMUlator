@@ -25,14 +25,10 @@ int SDL_PollEvent(SDL_Event *ev) {
   memset(buf,0,BUF_LEN);
   
   if(NDL_PollEvent(buf, BUF_LEN) == 0) return 0;
-  // printf("event is %s in SDL\n", buf);
   if(strncmp(buf, "kd", 2) == 0 ) ev->type = SDL_KEYDOWN;
   else if(strncmp(buf, "ku", 2) == 0) ev->type = SDL_KEYUP;
 
-
-  // printf("keyname to match is %s, len is %d", buf+3, strlen(buf+3)-1);
   for(size_t i = 0; i < NR_KEYS; ++i){
-    // printf("%s strlen is %d\n",keyname[i],strlen(keyname[i]));
     if(   ((strlen(buf + 3) - 1) == strlen(keyname[i])) \
        && (strncmp(buf + 3, keyname[i], strlen(keyname[i])) == 0) ) 
        {ev->key.keysym.sym = i; 
@@ -51,8 +47,10 @@ int SDL_WaitEvent(SDL_Event *event) {
   
   while(NDL_PollEvent(buf, BUF_LEN) == 0){};
   // printf("event is %s in SDL\n", buf);
-  if(strncmp(buf, "kd", 2) == 0 ) event->type = SDL_KEYDOWN;
-  else if(strncmp(buf, "ku", 2) == 0) event->type = SDL_KEYUP;
+  if(strncmp(buf, "kd", 2) == 0 ) 
+    event->type = SDL_KEYDOWN;
+  else if(strncmp(buf, "ku", 2) == 0) 
+    event->type = SDL_KEYUP;
 
   for(size_t i = 0; i < NR_KEYS; ++i){
     if(    ((strlen(buf + 3) - 1) == strlen(keyname[i]))  \
