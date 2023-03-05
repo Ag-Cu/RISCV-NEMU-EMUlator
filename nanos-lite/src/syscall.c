@@ -52,9 +52,9 @@ void do_syscall(Context *c) {
   a[2] = c->GPR3;
   a[3] = c->GPR4;
 
-    #ifdef CONFIG_STRACE_COND
+    // #ifdef CONFIG_STRACE_COND
     printf("Syscall %s(%d, %d, %d, %d) at epc = 0x%x\n", sysnames[a[0]], a[0], a[1], a[2], a[3], c->mepc);
-    #endif
+    // #endif
 
   switch (a[0]) {
     case SYS_yield:
