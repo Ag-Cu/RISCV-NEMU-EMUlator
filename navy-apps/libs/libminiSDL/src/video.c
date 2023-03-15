@@ -7,80 +7,82 @@
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
-  uint32_t s_start_pos = 0;
-  uint32_t s_sf_row_num = src->h, s_sf_col_num = src->w,
-           s_rec_row_num = src->h, s_rec_col_num = src->w;
-  if (srcrect != NULL)
-  {
-    s_start_pos = srcrect->x + srcrect->y * src->w;
-    s_rec_row_num = srcrect->h;
-    s_rec_col_num = srcrect->w;
-  }
 
-  uint32_t d_start_pos = 0;
-  uint32_t d_sf_row_num = dst->h, d_sf_col_num = dst->w;
-  //  d_rec_row_num = dst->h, d_rec_col_num = dst->w;
-  // printf("x,y,w is %d-- %d-- %d",dstrect->x,dstrect->y,dst->w);
-  if (dstrect != NULL)
-  {
-    d_start_pos = dstrect->x + dstrect->y * dst->w;
-    // d_rec_row_num = (dstrect->h > 0)? dstrect->h : d_rec_row_num;
-    // d_rec_col_num = (dstrect->w > 0)? dstrect->w : d_rec_col_num;
-  }
+  if (src->format->BitsPerPixel == 32){
+    uint32_t* src_pixels = (uint32_t*)src->pixels;
+    uint32_t* dst_pixels = (uint32_t*)dst->pixels;
 
-  // printf("dst x,y,w,h %d,%d,%d,%d\n", dstrect->x, dstrect->y, dstrect->w, dstrect->h);
-  // printf("src x,y,w,h %d,%d,%d,%d\n", srcrect->x, srcrect->y, srcrect->w, srcrect->h);
-  // printf("======================");
-  if (dst->format->BitsPerPixel == 32)
-  {
-    for (int row = 0; row < s_rec_row_num; ++row)
-    {
-      // printf("dst pos is  %d\n", d_sf_col_num);
-      // printf("copy %p, size %d to %p, size %d\n",  src->pixels + s_start_pos + row * s_sf_col_num ,s_rec_col_num, dst->pixels + d_start_pos + row * d_sf_col_num, d_rec_col_num);
-      memcpy((uint32_t *)dst->pixels + d_start_pos + row * d_sf_col_num, (uint32_t *)src->pixels + s_start_pos + row * s_sf_col_num, s_rec_col_num * sizeof(uint32_t));
+    int rect_w, rect_h, src_x, src_y, dst_x, dst_y;
+    if (srcrect){
+      rect_w = srcrect->w; rect_h = srcrect->h;
+      src_x = srcrect->x; src_y = srcrect->y; 
+    }else {
+      rect_w = src->w; rect_h = src->h;
+      src_x = 0; src_y = 0;
     }
-  }
-  else if (dst->format->BitsPerPixel == 8)
-  {
-    for (int row = 0; row < s_rec_row_num; ++row)
-    {
-      // printf("copy %p, size %d to %p, size %d\n",  src->pixels + s_start_pos + row * s_sf_col_num ,s_rec_col_num, dst->pixels + d_start_pos + row * d_sf_col_num, d_rec_col_num);
-      memcpy((uint8_t *)dst->pixels + d_start_pos + row * d_sf_col_num, (uint8_t *)src->pixels + s_start_pos + row * s_sf_col_num, s_rec_col_num * sizeof(uint8_t));
+    if (dstrect){
+      dst_x = dstrect->x, dst_y = dstrect->y;
+    }else {
+      dst_x = 0; dst_y = 0;
     }
+    
+    for (int i = 0; i < rect_h; ++i){
+      for (int j = 0; j < rect_w; ++j){
+        dst_pixels[(dst_y + i) * dst->w + dst_x + j] = src_pixels[(src_y + i) * src->w + src_x + j];
+      }
+    }
+  }else if (src->format->BitsPerPixel == 8){
+    uint8_t* src_pixels = (uint8_t*)src->pixels;
+    uint8_t* dst_pixels = (uint8_t*)dst->pixels;
+
+    int rect_w, rect_h, src_x, src_y, dst_x, dst_y;
+    if (srcrect){
+      rect_w = srcrect->w; rect_h = srcrect->h;
+      src_x = srcrect->x; src_y = srcrect->y; 
+    }else {
+      rect_w = src->w; rect_h = src->h;
+      src_x = 0; src_y = 0;
+    }
+    if (dstrect){
+      dst_x = dstrect->x, dst_y = dstrect->y;
+    }else {
+      dst_x = 0; dst_y = 0;
+    }
+    
+    for (int i = 0; i < rect_h; ++i){
+      for (int j = 0; j < rect_w; ++j){
+        dst_pixels[(dst_y + i) * dst->w + dst_x + j] = src_pixels[(src_y + i) * src->w + src_x + j];
+      }
+    }
+  }else {
+    assert(0);
   }
-  else
-    panic("unsupported pixel bites %d!\n", dst->format->BitsPerPixel);
+  
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
+  uint32_t *pixels = (uint32_t *)dst->pixels;
+  int dst_w = dst->w;
+  int rect_h, rect_w, rect_x, rect_y;
 
-  int32_t start_pos = 0;
-  uint32_t sf_row_num = dst->h;
-  uint32_t sf_col_num = dst->w;
-  uint32_t rec_row_num = dst->h;
-  uint32_t rec_col_num = dst->w;
-  if (dstrect != NULL)
-  {
-    start_pos = dstrect->x + dstrect->y * dst->w;
-    rec_row_num = dstrect->h;
-    rec_col_num = dstrect->w;
+  if (dstrect == NULL){
+    rect_w = dst->w;
+    rect_h = dst->h;
+    rect_x = 0;
+    rect_y = 0;
+  }else {
+    rect_w = dstrect->w;
+    rect_h = dstrect->h;
+    rect_x = dstrect->x;
+    rect_y = dstrect->y;
   }
 
-  if (dst->format->BitsPerPixel == 32)
-  {
-    for (int row = 0; row < rec_row_num; ++row)
-      memset((uint32_t *)dst->pixels + start_pos + row * sf_col_num, color, rec_col_num * sizeof(uint32_t));
+  for (int i = 0; i < rect_h; ++i){
+    for (int j = 0; j < rect_w; ++j){
+      pixels[(rect_y + i) * dst_w + rect_x + j] = color;
+    }
   }
-  else if (dst->format->BitsPerPixel == 8)
-  {
-    for (int row = 0; row < rec_row_num; ++row)
-      memset((uint8_t *)dst->pixels + start_pos + row * sf_col_num, color, rec_col_num * sizeof(uint8_t));
-  }
-  else
-    panic("unsupported pixel bites %d!\n", dst->format->BitsPerPixel);
-  
-  // printf("Fillrect over!!!\n");
-  return;
+
 }
 
 //update the rectangle of the surface
