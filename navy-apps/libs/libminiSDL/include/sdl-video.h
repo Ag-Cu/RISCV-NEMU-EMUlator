@@ -63,5 +63,7 @@ SDL_Surface *SDL_ConvertSurface(SDL_Surface *src, SDL_PixelFormat *fmt, uint32_t
 uint32_t SDL_MapRGBA(SDL_PixelFormat *fmt, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 int SDL_LockSurface(SDL_Surface *s);
 void SDL_UnlockSurface(SDL_Surface *s);
+uint32_t get_pixel(SDL_Surface *surface, int x, int y);
+void set_pixel(SDL_Surface *surface, int x, int y, uint32_t pixel);
 
 #endif

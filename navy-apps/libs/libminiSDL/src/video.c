@@ -7,9 +7,108 @@
 void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_Rect *dstrect) {
   assert(dst && src);
   assert(dst->format->BitsPerPixel == src->format->BitsPerPixel);
+    // 如果源矩形区域为空，则使用整个表面作为矩形区域
+    if (!srcrect) {
+        srcrect = &(SDL_Rect){0, 0, src->w, src->h};
+    }
+    // 如果目标矩形区域为空，则使用整个表面作为矩形区域
+    if (!dstrect) {
+        dstrect = &(SDL_Rect){0, 0, dst->w, dst->h};
+    }
+    // 计算源矩形和目标矩形在像素数组中的位置和大小
+    int srcx = srcrect->x;
+    int srcy = srcrect->y;
+    int srcw = srcrect->w;
+    int srch = srcrect->h;
+    int dstx = dstrect->x;
+    int dsty = dstrect->y;
+    int dstw = dstrect->w;
+    int dsth = dstrect->h;
+    // 根据源表面和目标表面的像素格式，逐个复制源表面的像素到目标表面的相应位置
+    for (int y = 0; y < srch; ++y) {
+        for (int x = 0; x < srcw; ++x) {
+            uint32_t pixel = get_pixel(src, srcx + x, srcy + y);
+            set_pixel(dst, dstx + x, dsty + y, pixel);
+        }
+    }
+}
+
+uint32_t get_pixel(SDL_Surface *surface, int x, int y) {
+    // 获取像素格式
+    SDL_PixelFormat *format = surface->format;
+    // 获取像素数组
+    uint8_t *pixels = (uint8_t *)surface->pixels;
+    // 计算像素在像素数组中的位置
+    int bpp = format->BytesPerPixel;
+    uint8_t *p = pixels + y * surface->pitch + x * bpp;
+    // 根据像素格式，获取像素的颜色值
+    uint32_t pixel;
+    switch (bpp) {
+        case 1:
+            pixel = *p;
+            break;
+        case 2:
+            pixel = *(uint16_t *)p;
+            break;
+        case 4:
+            pixel = *(uint32_t *)p;
+            break;
+        default:
+            pixel = 0;
+            break;
+    }
+    return pixel;
+}
+
+void set_pixel(SDL_Surface *surface, int x, int y, uint32_t pixel) {
+    // 获取像素格式
+    SDL_PixelFormat *format = surface->format;
+    // 获取像素数组
+    uint8_t *pixels = (uint8_t *)surface->pixels;
+    // 计算像素在像素数组中的位置
+    int bpp = format->BytesPerPixel;
+    uint8_t *p = pixels + y * surface->pitch + x * bpp;
+    // 根据像素格式，设置像素的颜色值
+    switch (bpp) {
+        case 1:
+            *p = pixel;
+            break;
+        case 2:
+            *(uint16_t *)p = pixel;
+            break;
+        case 4:
+            *(uint32_t *)p = pixel;
+            break;
+        default:
+            break;
+    }
 }
 
 void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
+  // 计算填充的矩形区域
+    SDL_Rect fillRect;
+    if (dstrect != NULL) {
+        fillRect.x = dstrect->x;
+        fillRect.y = dstrect->y;
+        fillRect.w = dstrect->w;
+        fillRect.h = dstrect->h;
+    } else {
+        fillRect.x = 0;
+        fillRect.y = 0;
+        fillRect.w = dst->w;
+        fillRect.h = dst->h;
+    }
+    // 获取颜色格式
+    SDL_PixelFormat *format = dst->format;
+    // 将颜色转换为表面格式
+    uint32_t c = SDL_MapRGBA(format, (color >> 16) & 0xff, (color >> 8) & 0xff, color & 0xff, (color >> 24) & 0xff);
+    // 填充像素
+    for (int y = fillRect.y; y < fillRect.y + fillRect.h; y++) {
+        for (int x = fillRect.x; x < fillRect.x + fillRect.w; x++) {
+            uint32_t *pixel = (uint32_t *)((uint8_t *)dst->pixels + y * dst->pitch + x * format->BytesPerPixel);
+            *pixel = c;
+        }
+    }
 }
 
 //update the rectangle of the surface
