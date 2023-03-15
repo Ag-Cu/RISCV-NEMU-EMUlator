@@ -88,7 +88,7 @@ WP* new_wp() {
 // return false if val change
 bool check_wp() {
   if (!wp_head) {
-    return false;
+    return true;
   }
   WP *cur = wp_head;
   bool success = true;
