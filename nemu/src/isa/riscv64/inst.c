@@ -338,3 +338,4 @@ void ecall_helper(Decode *s) {
   s->dnpc = isa_raise_intr(0xb, cpu.pc);
   // printf("ECALL from PC %02lx to PC:%02lx\n", cpu.pc, s->dnpc);
 }
+// 0x01873683 的二进制表示为 0000 0001 1000 0111 0 011 01101 00000 11
