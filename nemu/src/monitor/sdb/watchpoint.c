@@ -92,7 +92,7 @@ bool check_wp() {
   WP *cur = wp_head;
   bool success = true;
   while (cur) {
-    if (cur->val != expr(cur->args, &success)) {
+    if (cur->val == expr(cur->args, &success)) {
       if (!success) {
       printf("Bad expression,try again.\n");
       return false;

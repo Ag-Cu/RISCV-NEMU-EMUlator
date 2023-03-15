@@ -39,9 +39,9 @@ static struct rule {
    * Pay attention to the precedence level of different rules.
    */
 
-  {"0[xX][0-9]+", TK_HEX},            // hexadecimal-number
+  {"0[xX][0-9a-fA-F]+", TK_HEX},      // hexadecimal-number
   {"^[1-9][0-9]*|0", TK_NUM},         // decimal nums (neg & pos & zero)
-  {"\\$[a-z|0-9]+", TK_REG},              // reg_name
+  {"\\$[a-z|0-9]+", TK_REG},          // reg_name
   {" +", TK_NOTYPE},                  // spaces
   {"\\+", TK_PLUS},                   // plus
   {"==", TK_EQ},                      // equal
