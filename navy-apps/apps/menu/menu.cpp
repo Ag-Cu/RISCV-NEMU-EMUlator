@@ -75,14 +75,13 @@ int main(int argc, char *argv[], char *envp[]) {
   logo_sf = SDL_LoadBMP("/share/pictures/projectn.bmp");
   assert(logo_sf);
   set_i_max();
-  printf("after set_i_max()\n");
+
   while (1) {
     display_menu(i_max);
-    printf("after display_menu()\n");
+
     SDL_Event e;
     do {
       SDL_WaitEvent(&e);
-      printf("after SDL_WaitEvent()\n");
     } while (e.type != SDL_KEYDOWN);
 
     int i = -1;
@@ -122,12 +121,13 @@ int main(int argc, char *argv[], char *envp[]) {
 static void draw_ch(BDF_Font *font, int x, int y, char ch, uint32_t fg, uint32_t bg) {
   SDL_Surface *s = BDF_CreateSurface(font, ch, fg, bg);
   SDL_Rect dstrect = { .x = x, .y = y };
+  printf("draw_ch: %c, %d, %d\n", ch, x, y);
   SDL_BlitSurface(s, NULL, screen, &dstrect);
+  printf(" done\n");
   SDL_FreeSurface(s);
 }
 
 static void draw_str(BDF_Font *font, int x, int y, char *str, uint32_t fp, uint32_t bg) {
-  printf("draw_str\n");
   while (*str) {
     draw_ch(font, x, y, *str, fp, bg);
     x += font->w;
@@ -144,17 +144,13 @@ static void draw_text_row(char *s, int r) {
 static void display_menu(int n) {
   clear_display();
   SDL_Rect rect = { .x = screen->w - logo_sf->w, .y = 0 };
-  printf("After SDL_Rect\n");
   SDL_BlitSurface(logo_sf, NULL, screen, &rect);
   printf("Available applications:\n");
   char buf[80];
   int i;
-  printf("n = %d\n", n);
   for (i = 0; i <= n; i ++) {
-    printf("i = %d\n", i);
     auto *item = &items[page * 10 + i];
     sprintf(buf, "  [%d] %s", i, item->name);
-    printf("i = %d\n", i);
     draw_text_row(buf, i);
   }
 
