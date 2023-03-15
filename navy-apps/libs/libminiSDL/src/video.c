@@ -27,8 +27,11 @@ void SDL_BlitSurface(SDL_Surface *src, SDL_Rect *srcrect, SDL_Surface *dst, SDL_
     // 根据源表面和目标表面的像素格式，逐个复制源表面的像素到目标表面的相应位置
     for (int y = 0; y < srch; ++y) {
         for (int x = 0; x < srcw; ++x) {
+            printf("get_pixel\n");
             uint32_t pixel = get_pixel(src, srcx + x, srcy + y);
+            printf("set_pixel\n");
             set_pixel(dst, dstx + x, dsty + y, pixel);
+            printf("set_pixel end\n");
         }
     }
 }
