@@ -65,24 +65,23 @@ void SDL_FillRect(SDL_Surface *dst, SDL_Rect *dstrect, uint32_t color) {
   int dst_w = dst->w;
   int rect_h, rect_w, rect_x, rect_y;
 
-  if (dstrect == NULL){
+  if (dstrect == NULL) {
     rect_w = dst->w;
     rect_h = dst->h;
     rect_x = 0;
     rect_y = 0;
-  }else {
+  } else {
     rect_w = dstrect->w;
     rect_h = dstrect->h;
     rect_x = dstrect->x;
     rect_y = dstrect->y;
   }
 
-  for (int i = 0; i < rect_h; ++i){
-    for (int j = 0; j < rect_w; ++j){
+  for (int i = 0; i < rect_h; ++i) {
+    for (int j = 0; j < rect_w; ++j) {
       pixels[(rect_y + i) * dst_w + rect_x + j] = color;
     }
   }
-
 }
 
 //update the rectangle of the surface
