@@ -75,13 +75,14 @@ int main(int argc, char *argv[], char *envp[]) {
   logo_sf = SDL_LoadBMP("/share/pictures/projectn.bmp");
   assert(logo_sf);
   set_i_max();
-
+  printf("after set_i_max()\n");
   while (1) {
     display_menu(i_max);
-
+    printf("after display_menu()\n");
     SDL_Event e;
     do {
       SDL_WaitEvent(&e);
+      printf("after SDL_WaitEvent()\n");
     } while (e.type != SDL_KEYDOWN);
 
     int i = -1;
