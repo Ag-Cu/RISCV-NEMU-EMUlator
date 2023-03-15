@@ -85,6 +85,7 @@ WP* new_wp() {
   }
 }
 
+// return false if val change
 bool check_wp() {
   if (!wp_head) {
     return false;
@@ -92,17 +93,17 @@ bool check_wp() {
   WP *cur = wp_head;
   bool success = true;
   while (cur) {
-    if (cur->val == expr(cur->args, &success)) {
+    if (cur->val != expr(cur->args, &success)) {
       if (!success) {
-      printf("Bad expression,try again.\n");
-      return false;
+        printf("Bad expression,try again.\n");
+        return false;
       }
       printf("NO. %d watchpoint's value changed.\n", cur->NO);
-      return true;
+      return false;
     }
     cur = cur->next;
   }
-  return false;
+  return true;
 }
 
 void watchpoint_display() {
