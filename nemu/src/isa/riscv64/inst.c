@@ -158,8 +158,8 @@ static int decode_exec(Decode *s) {
   INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall  , I, Ecall(s));
   INSTPAT("0011000 00010 00000 000 00000 11100 11", mret   , R, s->dnpc = CSRs.mepc);
 
-  
-
+  //       0000000 01110 01111 010 00000 01000 11 
+  //          0      14    15   2   0      8   3
   INSTPAT("??????? ????? ????? ??? ????? ????? ??", inv    , N, INV(s->pc)); 
   INSTPAT_END();
 
@@ -338,4 +338,6 @@ void ecall_helper(Decode *s) {
   s->dnpc = isa_raise_intr(0xb, cpu.pc);
   // printf("ECALL from PC %02lx to PC:%02lx\n", cpu.pc, s->dnpc);
 }
-// 0x01873683 的二进制表示为 0000 0001 1000 0111 0 011 01101 00000 11
+
+
+// 0x00e7a023 的二进制是 0000 0000 1110 01111 010 00000 01000 11
