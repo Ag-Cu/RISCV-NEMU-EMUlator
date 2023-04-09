@@ -17,7 +17,14 @@
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
 #include <locale.h>
+
+#ifdef CONFIG_WATCHPOINT
 #include "../monitor/sdb/watchpoint.h"
+#endif
+
+#ifdef CONFIG_FTRACE_COND
+#include "../monitor/ftrace/ftracer.h"
+#endif
 
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -26,7 +33,19 @@
  */
 #define MAX_INST_TO_PRINT 10
 
+// 环形缓冲区
+#ifdef CONFIG_ITRACE_COND
+#define RING_BUF_SIZE 20
+#define RING_BUF_ELEM_SIZE 128
+#define RINGBUF_ELEM(i) (ringbuf[(i) % RING_BUF_SIZE])
+
+char ringbuf[RING_BUF_SIZE][RING_BUF_ELEM_SIZE];
+int ringbuf_write_index = 0;
+int ringbuf_count = 0;
+#endif
+
 CPU_state cpu = {};
+riscv64_CSR_state CSRs = {.mstatus = 0xa00001800};
 uint64_t g_nr_guest_inst = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
@@ -35,7 +54,22 @@ void device_update();
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
-  if (ITRACE_COND) { log_write("%s\n", _this->logbuf); }
+  if (ITRACE_COND) {
+     log_write("%s\n", _this->logbuf); 
+     if (nemu_state.state != NEMU_ABORT) {
+      strncpy(RINGBUF_ELEM(ringbuf_write_index++), _this->logbuf, RING_BUF_ELEM_SIZE);
+      ringbuf_count++;
+     } else {
+      strncpy(RINGBUF_ELEM(ringbuf_write_index++), "Next instruction cause abortion!\n", RING_BUF_ELEM_SIZE);
+      strncpy(RINGBUF_ELEM(ringbuf_write_index++), _this->logbuf, RING_BUF_ELEM_SIZE);
+      // output ringbuf
+      int start = 0, log_num = ringbuf_count > RING_BUF_SIZE ? RING_BUF_SIZE : ringbuf_count;
+      if (ringbuf_count > RING_BUF_SIZE) start = ringbuf_write_index + 1;
+      for (int i = start; i < log_num; i++) {
+        printf("%s\n", RINGBUF_ELEM(i));
+      }
+     }
+     }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
@@ -47,7 +81,7 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #endif
 }
 
-static void exec_once(Decode *s, vaddr_t pc) {
+static void exec_once(Decode *s, vaddr_t pc) {  
   s->pc = pc;
   s->snpc = pc;
   isa_exec_once(s);
@@ -80,7 +114,12 @@ static void execute(uint64_t n) {
     exec_once(&s, cpu.pc);
     g_nr_guest_inst ++;
     trace_and_difftest(&s, cpu.pc);
-    if (nemu_state.state != NEMU_RUNNING) break;
+    if (nemu_state.state != NEMU_RUNNING) {
+      #ifdef CONFIG_FTRACE_COND
+      print_ftrace_info();        // print ftrace info
+      #endif
+      break;
+    }
     IFDEF(CONFIG_DEVICE, device_update());
   }
 }

@@ -52,6 +52,17 @@ char *strcat(char *dst, const char *src) {
   return dst;
 }
 
+char *strncat(char *dst, const char *src, size_t n) {
+  size_t i, j;
+  for (i = 0; dst[i] != '\0'; i++) {
+  }
+  for (j = 0; j < n && src[j] != '\0'; j++) {
+    dst[i + j] = src[j];
+  }
+  dst[i + j] = '\0';
+  return dst;
+}
+
 int strcmp(const char *s1, const char *s2) {
   size_t i;
   for (i = 0; s1[i] != '\0' && s2[i] != '\0'; i++) {

@@ -17,15 +17,19 @@
 include $(NEMU_HOME)/scripts/build.mk
 
 include $(NEMU_HOME)/tools/difftest.mk
+include $(NEMU_HOME)/tools/batch.mk
+include $(NEMU_HOME)/tools/ftrace.mk
 
 compile_git:
 	$(call git_commit, "compile NEMU")
 $(BINARY): compile_git
 
 # Some convenient rules
-
-override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt
+override ARGS ?= --log=$(BUILD_DIR)/nemu-log.txt		
 override ARGS += $(ARGS_DIFF)
+override ARGS += $(ARGS_BATCH)
+override ARGS += $(ARGS_FTRACE)
+
 
 # Command to execute NEMU
 IMG ?=

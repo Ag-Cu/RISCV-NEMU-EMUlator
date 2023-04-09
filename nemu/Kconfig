@@ -125,6 +125,30 @@ config WATCHPOINT
   bool "Enable watch point"
   default y
 
+config MTRACE_COND
+  bool "Enable memory trace"
+  default y
+
+config FTRACE_COND
+  bool "Enable function trace"
+  default y
+
+config DTRACE_COND
+  bool "Enable device trace"
+  default y
+
+config ETRACE_COND
+  bool "Enable exception trace"
+  default y
+
+config STRACE_COND
+  bool "Enable syscall trace"
+  default y
+
+config BATCH_MODE
+  bool "Batch mode"
+  default y
+
 config TRACE
   bool "Enable tracer"
   default y
@@ -148,7 +172,6 @@ config ITRACE_COND
   depends on ITRACE
   string "Only trace instructions when the condition is true"
   default "true"
-
 
 config DIFFTEST
   depends on TARGET_NATIVE_ELF
